@@ -14,76 +14,97 @@
             margin: 0;
             padding: 0;
             color: #0F1A2B; /* Deep Navy */
+            -webkit-text-size-adjust: 100%;
         }
 
-        /* 1. СТАРТОВЫЙ БЛОК */
+        /* 1. СТАРТОВЫЙ БЛОК (Адаптивный под экраны смартфонов) */
         .welcome-screen {
-            height: 45vh;
+            height: 50vh;
             display: flex;
             align-items: flex-start;
-            padding: 10vh 10vw;
+            padding: 10vh 8vw;
             box-sizing: border-box;
         }
 
         .welcome-screen h1 {
-            font-size: 6rem;
+            font-size: 3.5rem; /* Размер для смартфонов по умолчанию */
             font-weight: 800;
-            line-height: 1.2;
+            line-height: 1.15;
             color: #0F1A2B;
             margin: 0;
             letter-spacing: -0.02em;
+        }
+
+        /* Настольные мониторы: возвращаем огромный размер заголовка */
+        @media (min-width: 768px) {
+            .welcome-screen { height: 70vh; padding: 10vh 10vw; }
+            .welcome-screen h1 { font-size: 6rem; }
         }
 
         /* Рабочая область */
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 10vw 100px 10vw;
+            padding: 0 4vw 60px 4vw;
+        }
+        @media (min-width: 768px) {
+            .main-content { padding: 0 10vw 100px 10vw; }
         }
 
-        /* 2. НАСТРОЙКА ВКЛАДОК (Без вертикальных ползунков) */
+        /* 2. НАСТРОЙКА ВКЛАДОК (Плавный скролл пальцем на мобилках в стиле Pinterest) */
         .tabs-container {
             display: flex;
-            flex-wrap: wrap; /* Вкладки будут переноситься, если не влезают, убирая стрелки вверх-вниз */
-            margin-bottom: 30px;
-            gap: 8px;
-            border-bottom: 4px solid #1C2E4A; /* Четкая синяя полоса под вкладками */
+            flex-wrap: nowrap; /* Запрещаем перенос строк */
+            margin-bottom: 24px;
+            gap: 6px;
+            border-bottom: 4px solid #1C2E4A; /* Четкая синяя полоса */
             padding-bottom: 0;
-            overflow: hidden; /* Полностью убирает любые ползунки */
+            overflow-x: auto; /* Включаем горизонтальную прокрутку пальцем */
+            overflow-y: hidden; /* Намертво убираем вертикальный ползунок */
+            -webkit-overflow-scrolling: touch; /* Делает скролл на iPhone плавным */
+        }
+
+        /* Скрываем уродливый стандартный ползунок прокрутки в браузерах */
+        .tabs-container::-webkit-scrollbar {
+            display: none;
         }
 
         .tab {
-            padding: 14px 24px;
+            padding: 12px 20px;
             cursor: pointer;
-            background-color: #52677D; /* Dusty Blue для неактивных */
+            background-color: #52677D; /* Dusty Blue */
             border: 1px solid #BDC4D4;
             border-bottom: none;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             color: #F9F5ED;
             transition: all 0.2s ease;
             white-space: nowrap;
             margin-bottom: -1px;
+            flex-shrink: 0; /* Не дает вкладкам сжиматься и ломать текст */
+        }
+        @media (min-width: 768px) {
+            .tab { padding: 14px 24px; font-size: 0.95rem; }
         }
 
         .tab:hover {
             background-color: #435568;
         }
 
-        /* АКТИВНАЯ ВКЛАДКА — Идеально сливается с новым фоном #F9F5ED */
+        /* АКТИВНАЯ ВКЛАДКА */
         .tab.active {
             background-color: #F9F5ED;
             color: #0F1A2B;
             border-color: #1C2E4A;
-            border-bottom: 4px solid #F9F5ED; /* Перекрывает синюю полоску в месте клика */
-            margin-bottom: -4px; /* Корректировка под толщину линии */
+            border-bottom: 4px solid #F9F5ED;
+            margin-bottom: -4px;
             position: relative;
             z-index: 2;
         }
 
-        /* 3. КОНТЕНТНАЯ ПАНЕЛЬ (Полностью прозрачная, без рамок и теней) */
+        /* 3. КОНТЕНТНАЯ ПАНЕЛЬ */
         .tab-panel {
             display: none;
             background: transparent !important;
@@ -92,7 +113,6 @@
             box-shadow: none !important;
             animation: fadeIn 0.3s ease;
         }
-
         .tab-panel.active { display: block; }
 
         @keyframes fadeIn {
@@ -102,17 +122,17 @@
 
         /* 4. ПОДТЕМЫ НА ОБЩЕМ ФОНЕ */
         details {
-            background: #BDC4D4; /* Светло-серый/голубой */
-            margin-bottom: 14px;
+            background: #BDC4D4;
+            margin-bottom: 12px;
             border: 1px solid #BDC4D4;
             border-radius: 12px;
             overflow: hidden;
         }
 
         summary {
-            padding: 16px 20px;
+            padding: 14px 18px;
             font-weight: 600;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             color: #0F1A2B;
             cursor: pointer;
             outline: none;
@@ -120,6 +140,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+        @media (min-width: 768px) {
+            summary { padding: 16px 20px; font-size: 1.05rem; }
         }
 
         details[open] {
@@ -133,41 +157,56 @@
         }
 
         .requests-list {
-            padding: 20px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
+        }
+        @media (min-width: 768px) {
+            .requests-list { padding: 20px; gap: 16px; }
         }
 
-        /* 5. КАРТОЧКА ИНИЦИАТИВЫ */
+        /* 5. КАРТОЧКА ИНИЦИАТИВЫ (Адаптивная сетка) */
         .request-card {
             background: #ffffff;
             border: 1px solid #BDC4D4;
             border-radius: 14px;
-            padding: 24px;
+            padding: 16px;
             box-shadow: 0 2px 8px rgba(15, 26, 43, 0.03);
-            display: grid;
-            grid-template-areas:
-                "city file"
-                "text text"
-                "status date";
-            grid-template-rows: auto 1fr auto;
-            gap: 14px;
+            display: flex;
+            flex-direction: column; /* На мобильных выстраиваем элементы друг под другом */
+            gap: 12px;
+        }
+
+        /* На компьютерах включаем красивую Grid-сетку */
+        @media (min-width: 768px) {
+            .request-card {
+                padding: 24px;
+                display: grid;
+                grid-template-areas:
+                    "city file"
+                    "text text"
+                    "status date";
+                grid-template-rows: auto 1fr auto;
+                gap: 14px;
+            }
         }
 
         .card-city {
             grid-area: city;
             font-weight: 700;
-            color: #1C2E4A; /* Midnight Blue */
-            font-size: 0.9rem;
+            color: #1C2E4A;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.03em;
         }
 
         .card-file {
             grid-area: file;
-            text-align: right;
-            align-self: center;
+            text-align: left;
+        }
+        @media (min-width: 768px) {
+            .card-file { text-align: right; align-self: center; }
         }
         .card-file a {
             background-color: #1C2E4A;
@@ -177,21 +216,30 @@
             font-size: 0.8rem;
             font-weight: 600;
             text-decoration: none;
+            display: inline-block;
         }
 
         .card-text {
             grid-area: text;
             color: #0F1A2B;
-            font-size: 0.98rem;
-            line-height: 1.6;
+            font-size: 0.93rem;
+            line-height: 1.5;
+            word-break: break-word; /* Защита от вылезания длинных слов */
+        }
+        @media (min-width: 768px) {
+            .card-text { font-size: 0.98rem; line-height: 1.6; }
         }
 
         .card-status-block {
             grid-area: status;
-            font-size: 0.85rem;
-            color: #52677D; /* Dusty Blue */
-            align-self: end;
-            line-height: 1.5;
+            font-size: 0.8rem;
+            color: #52677D;
+            line-height: 1.4;
+            border-top: 1px solid #E6EAEF; /* Разделитель на мобилках */
+            padding-top: 10px;
+        }
+        @media (min-width: 768px) {
+            .card-status-block { font-size: 0.85rem; line-height: 1.5; border-top: none; padding-top: 0; align-self: end; }
         }
 
         .status-badge {
@@ -199,7 +247,7 @@
             padding: 2px 8px;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             background-color: #F9F5ED;
             color: #52677D;
             margin-left: 4px;
@@ -208,24 +256,28 @@
 
         .card-date-block {
             grid-area: date;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #52677D;
-            text-align: right;
-            align-self: end;
+            text-align: left;
             font-weight: 500;
+        }
+        @media (min-width: 768px) {
+            .card-date-block { font-size: 0.85rem; text-align: right; align-self: end; }
         }
     </style>
 </head>
 <body>
 
     <div class="welcome-screen">
-        <h1>Банк инициатив граждан<br></h1>
+        <h1>Банк инициатив<br>граждан</h1>
     </div>
 
     <div class="main-content">
+        <!-- Адаптивный контейнер вкладок с горизонтальным скроллом -->
         <div class="tabs-container" id="tabs"></div>
         <div id="panels"></div>
     </div>
+
     <script>
     async function initSite() {
         try {

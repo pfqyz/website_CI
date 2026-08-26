@@ -143,123 +143,122 @@
     <div id="panels"></div>
 
     <script>
-        async function initSite() {
-            try {
-                const response = await fetch('data.json');
-                const data = await response.json();
+    async function initSite() {
+        try {
+            const response = await fetch('data.json');
+            const data = await response.json();
 
-                // Группируем данные: Тема -> Подтема -> Список заявок
-                const structuredData = {};
+            // Группируем данные строго по вашим английским ключам: theme -> subtheme
+            const structuredData = {};
 
-                data.forEach(item => {
-                    // Код автоматически понимает и английские, и русские ключи таблицы
-                    const theme = item.theme || item["Тема"] || "Без темы";
-                    const subtheme = item.subtheme || item["Подтема"] || "Общее";
+            data.forEach(item => {
+                const theme = item.theme || "Без темы";
+                const subtheme = item.subtheme || "Общее";
 
-                    if (!structuredData[theme]) {
-                        structuredData[theme] = {};
-                    }
-                    if (!structuredData[theme][subtheme]) {
-                        structuredData[theme][subtheme] = [];
-                    }
-                    structuredData[theme][subtheme].push(item);
-                });
+                if (!structuredData[theme]) {
+                    structuredData[theme] = {};
+                }
+                if (!structuredData[theme][subtheme]) {
+                    structuredData[theme][subtheme] = [];
+                }
+                structuredData[theme][subtheme].push(item);
+            });
 
-                const tabsContainer = document.getElementById('tabs');
-                const panelsContainer = document.getElementById('panels');
+            const tabsContainer = document.getElementById('tabs');
+            const panelsContainer = document.getElementById('panels');
 
-                tabsContainer.innerHTML = '';
-                panelsContainer.innerHTML = '';
+            tabsContainer.innerHTML = '';
+            panelsContainer.innerHTML = '';
 
-                let isFirst = true;
+            let isFirst = true;
 
-                for (const theme in structuredData) {
-                    const themeId = 'theme-' + Math.random().toString(36).substr(2, 9);
+            for (const theme in structuredData) {
+                const themeId = 'theme-' + Math.random().toString(36).substr(2, 9);
 
-                    // 1. Создаем вкладку (язычок папки)
-                    const tab = document.createElement('div');
-                    tab.className = `tab ${isFirst ? 'active' : ''}`;
-                    tab.innerText = theme.length > 40 ? theme.substring(0, 40) + '...' : theme;
-                    tab.title = theme;
-                    tab.setAttribute('data-target', themeId);
-                    tabsContainer.appendChild(tab);
+                // 1. Создаем вкладку (язычок папки)
+                const tab = document.createElement('div');
+                tab.className = `tab ${isFirst ? 'active' : ''}`;
+                tab.innerText = theme.length > 40 ? theme.substring(0, 40) + '...' : theme;
+                tab.title = theme;
+                tab.setAttribute('data-target', themeId);
+                tabsContainer.appendChild(tab);
 
-                    // 2. Создаем панель контента
-                    const panel = document.createElement('div');
-                    panel.className = `tab-panel ${isFirst ? 'active' : ''}`;
-                    panel.id = themeId;
+                // 2. Создаем панель контента
+                const panel = document.createElement('div');
+                panel.className = `tab-panel ${isFirst ? 'active' : ''}`;
+                panel.id = themeId;
 
-                    // Заполняем подтемами
-                    for (const subtheme in structuredData[theme]) {
-                        const details = document.createElement('details');
-                        const summary = document.createElement('summary');
-                        summary.innerText = `${subtheme} (${structuredData[theme][subtheme].length})`;
-                        details.appendChild(summary);
+                // Заполняем подтемами
+                for (const subtheme in structuredData[theme]) {
+                    const details = document.createElement('details');
+                    const summary = document.createElement('summary');
+                    summary.innerText = `${subtheme} (${structuredData[theme][subtheme].length})`;
+                    details.appendChild(summary);
 
-                        const requestsList = document.createElement('div');
-                        requestsList.className = 'requests-list';
+                    const requestsList = document.createElement('div');
+                    requestsList.className = 'requests-list';
 
-                        // Заполняем заявками
-                        structuredData[theme][subtheme].forEach(req => {
-                            const card = document.createElement('div');
-                            card.className = 'request-card';
+                    // Заполняем заявками
+                    structuredData[theme][subtheme].forEach(req => {
+                        const card = document.createElement('div');
+                        card.className = 'request-card';
 
-                            // Совместимость ключей (ENG/RUS) и дефолтные значения
-                            const city = req.city || req["Город"] || "Не указан";
-                            const text = req.text || req["Текст"] || "Текст отсутствует";
-                            const status = req.status || req["Статус_инициативы"] || "В обработке";
-                            const statusDate = req.status_date || req["Статус_подзадачи"] || "Не обработано";
-                            const date = req.date || req["Дата "] || req["Дата"] || "—";
-                            const time = req.time || req["Время"] || "—";
-                            const fileUrl = req.file || req["Ссылка на файл"] || "";
+                        // Извлекаем переменные строго по ключам из вашего JSON
+                        const city = req.city || "Не указан";
+                        const text = req.text || "Текст отсутствует";
+                        const status = req.status || "В обработке";
+                        const statusDate = req.status_date || "—";
+                        const date = req.date || "—";
+                        const time = req.time || "—";
+                        const fileUrl = req.file || "";
 
-                            // Проверяем наличие прикрепленного файла
-                            let fileHTML = '';
-                            if (fileUrl && fileUrl.trim() !== "") {
-                                fileHTML = `<div class="card-file"><a href="${fileUrl}" target="_blank">📄 Документ</a></div>`;
-                            }
+                        // Проверяем наличие прикрепленного файла
+                        let fileHTML = '';
+                        if (fileUrl && fileUrl.trim() !== "") {
+                            fileHTML = `<div class="card-file"><a href="${fileUrl}" target="_blank">📄 Документ</a></div>`;
+                        }
 
-                            card.innerHTML = `
-                                <div class="card-city">${city}</div>
-                                ${fileHTML}
-                                <div class="card-text">${text}</div>
-                                <div class="card-status-block">
-                                    <b>Статус:</b> ${status}<br>
-                                    <b>Обработка:</b> ${statusDate}
-                                </div>
-                                <div class="card-date-block">
-                                    ${date} в ${time}
-                                </div>
-                            `;
-                            requestsList.appendChild(card);
-                        });
+                        card.innerHTML = `
+                            <div class="card-city">${city}</div>
+                            ${fileHTML}
+                            <div class="card-text">${text}</div>
+                            <div class="card-status-block">
+                                <b>Статус:</b> ${status}<br>
+                                <b>Обработано:</b> ${statusDate}
+                            </div>
+                            <div class="card-date-block">
+                                ${date} в ${time}
+                            </div>
+                        `;
+                        requestsList.appendChild(card);
+                    });
 
-                        details.appendChild(requestsList);
-                        panel.appendChild(details);
-                    }
-
-                    panelsContainer.appendChild(panel);
-                    isFirst = false;
+                    details.appendChild(requestsList);
+                    panel.appendChild(details);
                 }
 
-                // Логика переключения
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-
-                        tab.classList.add('active');
-                        document.getElementById(tab.getAttribute('data-target')).classList.add('active');
-                    });
-                });
-
-            } catch (error) {
-                console.error("Ошибка:", error);
-                document.getElementById('panels').innerText = "Ошибка загрузки данных. Проверьте структуру файла data.json.";
+                panelsContainer.appendChild(panel);
+                isFirst = false;
             }
-        }
 
-        initSite();
+            // Логика переключения
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+                });
+            });
+
+        } catch (error) {
+            console.error("Ошибка:", error);
+            document.getElementById('panels').innerText = "Ошибка загрузки данных. Проверьте структуру файла data.json.";
+        }
+    }
+
+    initSite();
     </script>
 </body>
 </html>

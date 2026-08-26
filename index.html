@@ -19,6 +19,7 @@
             border-bottom: 2px solid #ccc;
             margin-bottom: 20px;
             gap: 5px;
+            overflow-x: auto;
         }
         .tab {
             padding: 10px 20px;
@@ -33,6 +34,7 @@
             transition: all 0.2s;
             position: relative;
             bottom: -2px;
+            white-space: nowrap;
         }
         .tab.active {
             background-color: #ffffff;
@@ -76,7 +78,7 @@
             gap: 15px;
         }
 
-        /* Закругленная карточка заявки по вашему описанию */
+        /* Закругленная карточка заявки */
         .request-card {
             background: #ffffff;
             border: 1px solid #e0e0e0;
@@ -84,8 +86,8 @@
             padding: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
             display: grid;
-            grid-template-areas: 
-                "city . "
+            grid-template-areas:
+                "city file"
                 "text text"
                 "status date";
             grid-template-rows: auto 1fr auto;
@@ -96,6 +98,19 @@
             font-weight: bold;
             color: #007bff;
             font-size: 0.9rem;
+        }
+        .card-file {
+            grid-area: file;
+            text-align: right;
+            font-size: 0.85rem;
+        }
+        .card-file a {
+            color: #28a745;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .card-file a:hover {
+            text-decoration: underline;
         }
         .card-text {
             grid-area: text;
@@ -121,17 +136,15 @@
 
     <h1>Банк инициатив граждан</h1>
 
-    <!-- Сюда JavaScript вставит вкладки-язычки -->
+    <!-- Вкладки-язычки -->
     <div class="tabs-container" id="tabs"></div>
 
-    <!-- Сюда JavaScript вставит контент для каждой вкладки -->
+    <!-- Контент вкладок -->
     <div id="panels"></div>
 
     <script>
-        // Функция для загрузки данных и построения интерфейса
         async function initSite() {
             try {
-                // Загружаем наш файл data.json
                 const response = await fetch('data.json');
                 const data = await response.json();
 
@@ -139,39 +152,44 @@
                 const structuredData = {};
 
                 data.forEach(item => {
-                    if (!structuredData[item.theme]) {
-                        structuredData[item.theme] = {};
+                    // Код автоматически понимает и английские, и русские ключи таблицы
+                    const theme = item.theme || item["Тема"] || "Без темы";
+                    const subtheme = item.subtheme || item["Подтема"] || "Общее";
+
+                    if (!structuredData[theme]) {
+                        structuredData[theme] = {};
                     }
-                    if (!structuredData[item.theme][item.subtheme]) {
-                        structuredData[item.theme][item.subtheme] = [];
+                    if (!structuredData[theme][subtheme]) {
+                        structuredData[theme][subtheme] = [];
                     }
-                    structuredData[item.theme][item.subtheme].push(item);
+                    structuredData[theme][subtheme].push(item);
                 });
 
                 const tabsContainer = document.getElementById('tabs');
                 const panelsContainer = document.getElementById('panels');
-                
+
+                tabsContainer.innerHTML = '';
+                panelsContainer.innerHTML = '';
+
                 let isFirst = true;
 
-                // Обходим сгруппированные темы для создания вкладок
                 for (const theme in structuredData) {
                     const themeId = 'theme-' + Math.random().toString(36).substr(2, 9);
 
                     // 1. Создаем вкладку (язычок папки)
                     const tab = document.createElement('div');
                     tab.className = `tab ${isFirst ? 'active' : ''}`;
-                    // Сократим название темы для компактности на панели вкладок
                     tab.innerText = theme.length > 40 ? theme.substring(0, 40) + '...' : theme;
-                    tab.title = theme; // Полное название при наведении
+                    tab.title = theme;
                     tab.setAttribute('data-target', themeId);
                     tabsContainer.appendChild(tab);
 
-                    // 2. Создаем панель контента для этой темы
+                    // 2. Создаем панель контента
                     const panel = document.createElement('div');
                     panel.className = `tab-panel ${isFirst ? 'active' : ''}`;
                     panel.id = themeId;
 
-                    // Заполняем панель подтемами
+                    // Заполняем подтемами
                     for (const subtheme in structuredData[theme]) {
                         const details = document.createElement('details');
                         const summary = document.createElement('summary');
@@ -181,21 +199,36 @@
                         const requestsList = document.createElement('div');
                         requestsList.className = 'requests-list';
 
-                        // Заполняем подтему карточками заявок
+                        // Заполняем заявками
                         structuredData[theme][subtheme].forEach(req => {
                             const card = document.createElement('div');
                             card.className = 'request-card';
-                            
-                            // Заполняем сетку карточки по вашей схеме позиционирования
+
+                            // Совместимость ключей (ENG/RUS) и дефолтные значения
+                            const city = req.city || req["Город"] || "Не указан";
+                            const text = req.text || req["Текст"] || "Текст отсутствует";
+                            const status = req.status || req["Статус_инициативы"] || "В обработке";
+                            const statusDate = req.status_date || req["Статус_подзадачи"] || "Не обработано";
+                            const date = req.date || req["Дата "] || req["Дата"] || "—";
+                            const time = req.time || req["Время"] || "—";
+                            const fileUrl = req.file || req["Ссылка на файл"] || "";
+
+                            // Проверяем наличие прикрепленного файла
+                            let fileHTML = '';
+                            if (fileUrl && fileUrl.trim() !== "") {
+                                fileHTML = `<div class="card-file"><a href="${fileUrl}" target="_blank">📄 Документ</a></div>`;
+                            }
+
                             card.innerHTML = `
-                                <div class="card-city">${req.city}</div>
-                                <div class="card-text">${req.text}</div>
+                                <div class="card-city">${city}</div>
+                                ${fileHTML}
+                                <div class="card-text">${text}</div>
                                 <div class="card-status-block">
-                                    <b>Статус:</b> ${req.status || 'Не указан'}<br>
-                                    <b>Обработано:</b> ${req.status_date || '—'}
+                                    <b>Статус:</b> ${status}<br>
+                                    <b>Обработка:</b> ${statusDate}
                                 </div>
                                 <div class="card-date-block">
-                                    ${req.date} в ${req.time}
+                                    ${date} в ${time}
                                 </div>
                             `;
                             requestsList.appendChild(card);
@@ -209,7 +242,7 @@
                     isFirst = false;
                 }
 
-                // Навешиваем событие клика для переключения вкладок
+                // Логика переключения
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', () => {
                         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -221,12 +254,11 @@
                 });
 
             } catch (error) {
-                console.error("Ошибка загрузки данных:", error);
-                document.getElementById('panels').innerText = "Не удалось загрузить данные из таблицы. Убедитесь, что файл data.json находится в той же папке.";
+                console.error("Ошибка:", error);
+                document.getElementById('panels').innerText = "Ошибка загрузки данных. Проверьте структуру файла data.json.";
             }
         }
 
-        // Запуск генерации сайта
         initSite();
     </script>
 </body>

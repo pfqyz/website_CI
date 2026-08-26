@@ -7,27 +7,27 @@
     <style>
         @import url('https://googleapis.com');
 
-        /* Базовые настройки страницы */
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #FAF7F2; /* Свежий Buttercream/Ivory (не слишком желтый) */
+            background-color: #FAF7F2;
             margin: 0;
             padding: 0;
-            color: #0F1A2B; /* Deep Navy вместо черного */
+            color: #0F1A2B;
         }
 
         /* 1. СТАРТОВЫЙ БЛОК (Из вашего макета Figma) */
         .welcome-screen {
-            height: 100vh; /* Занимает ровно весь экран */
+            height: 50vh;
             display: flex;
             align-items: flex-start;
-            padding: 10vh 10vw; /* Отступы сверху и слева как на скрине */
+            padding: 10vh 10vw;
             box-sizing: border-box;
         }
 
         .welcome-screen h1 {
-            font-size: 4rem; /* Крупный, уверенный заголовок */
-            font-weight: 500;
+            font-size: 6rem;
+            font-weight: 800;
             line-height: 1.2;
             color: #0F1A2B; /* Deep Navy */
             margin: 0;
@@ -242,7 +242,7 @@
         <!-- Сюда JS вставит контент (папки) -->
         <div id="panels"></div>
     </div>
-    
+
     <script>
     async function initSite() {
         try {

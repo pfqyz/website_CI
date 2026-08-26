@@ -7,18 +7,18 @@
     <style>
         @import url('https://googleapis.com');
 
-
+        /* Общий фон страницы - нежно-кремовый Buttercream/Ivory */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #FAF7F2;
             margin: 0;
             padding: 0;
-            color: #0F1A2B;
+            color: #0F1A2B; /* Deep Navy */
         }
 
-        /* 1. СТАРТОВЫЙ БЛОК (Из вашего макета Figma) */
+        /* 1. ВАШ СТАРТОВЫЙ БЛОК ИЗ FIGMA (С вашими правками) */
         .welcome-screen {
-            height: 50vh;
+            height: 70vh;
             display: flex;
             align-items: flex-start;
             padding: 10vh 10vw;
@@ -29,29 +29,30 @@
             font-size: 6rem;
             font-weight: 800;
             line-height: 1.2;
-            color: #0F1A2B; /* Deep Navy */
+            color: #0F1A2B;
             margin: 0;
             letter-spacing: -0.02em;
         }
 
-        /* Контейнер для основной рабочей зоны (появляется при скролле) */
+        /* Контейнер для вкладок и контента */
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 40px 100px 40px;
+            padding: 0 10vw 100px 10vw; /* Выровняли отступ слева строго по заголовку */
         }
 
-        /* 2. ВКЛАДКИ САЙТА (Язычки папок) */
+        /* 2. ВЕРХНИЕ ВКЛАДКИ (Язычки) */
         .tabs-container {
             display: flex;
-            margin-bottom: 0;
-            gap: 6px;
+            margin-bottom: 30px;
+            gap: 8px;
             overflow-x: auto;
-            padding-left: 10px;
+            border-bottom: 2px solid #BDC4D4; /* Линия под вкладками для структуры */
+            padding-bottom: 2px;
         }
 
         .tab {
-            padding: 14px 28px;
+            padding: 14px 24px;
             cursor: pointer;
             background-color: #52677D; /* Dusty Blue для неактивных вкладок */
             border: 1px solid #BDC4D4;
@@ -60,10 +61,8 @@
             border-top-right-radius: 12px;
             font-weight: 600;
             font-size: 0.95rem;
-            color: #FAF7F2; /* Светлый текст на темной вкладке */
+            color: #FAF7F2; /* Светлый текст на темных неактивных вкладках */
             transition: all 0.2s ease;
-            position: relative;
-            bottom: -1px;
             white-space: nowrap;
         }
 
@@ -71,49 +70,46 @@
             background-color: #435568;
         }
 
-        /* Активная вкладка — сливается с белой панелью контента */
+        /* АКТИВНАЯ ВКЛАДКА: Полностью сливается с фоном страницы, без рамок снизу */
         .tab.active {
-            background-color: #ffffff;
+            background-color: #FAF7F2; /* Цвет в цвет с фоном страницы */
             color: #0F1A2B; /* Deep Navy */
             border-color: #BDC4D4;
-            padding-bottom: 15px;
-            bottom: -1px;
+            border-bottom: 2px solid #FAF7F2; /* Перекрывает линию контейнера */
+            margin-bottom: -2px; /* Прижимает к линии */
             z-index: 2;
         }
 
-        /* Белая подложка под контент (Папка) */
+        /* 3. ПАНЕЛЬ ТЕМЫ (Теперь прозрачная, сливается с фоном, без контуров) */
         .tab-panel {
             display: none;
-            background: #ffffff;
-            padding: 40px;
-            border: 1px solid #BDC4D4;
-            border-radius: 16px;
-            border-top-left-radius: 0; /* Эффект цельной папки */
-            box-shadow: 0 20px 40px rgba(15, 26, 43, 0.04);
+            background: transparent; /* Полностью прозрачный фон */
+            padding: 0; /* Убрали внутренние отступы белого бокса */
+            border: none; /* УБРАЛИ КОНТУР И РАМКИ */
+            box-shadow: none; /* Убрали тень от старого белого бокса */
             animation: fadeIn 0.3s ease;
         }
 
         .tab-panel.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        /* 3. ВЫПАДАЮЩИЕ СПИСКИ ПОДТЕМ */
+        /* 4. ВЫПАДАЮЩИЕ СПИСКИ ПОДТЕМ (Располагаются прямо на фоне страницы) */
         details {
-            background: #BDC4D4; /* Светло-серый/голубой заменен на BDC4D4 */
-            margin-bottom: 16px;
+            background: #BDC4D4; /* Светло-серый Ivory замена по вашему ТЗ */
+            margin-bottom: 14px;
             border: 1px solid #BDC4D4;
             border-radius: 12px;
             overflow: hidden;
-            transition: all 0.2s ease;
         }
 
         summary {
-            padding: 18px 24px;
+            padding: 16px 20px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: #0F1A2B; /* Deep Navy */
             cursor: pointer;
             outline: none;
@@ -123,44 +119,38 @@
             align-items: center;
         }
 
+        /* Изменение цвета подтемы при раскрытии */
         details[open] {
-            background: #ffffff;
+            background: #ffffff; /* Сама подтема внутри становится белой для контраста карточек */
             border-color: #BDC4D4;
         }
 
         details[open] summary {
             border-bottom: 1px solid #BDC4D4;
-            background: #FAF7F2; /* Buttercream на шапку раскрытой подтемы */
+            background: #E6EAEF; /* Чуть темнее при раскрытии */
         }
 
         .requests-list {
-            padding: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            background-color: #ffffff;
+            gap: 16px;
         }
 
-        /* 4. КАРТОЧКА ЗАЯВКИ */
+        /* 5. КАРТОЧКА ЗАЯВКИ (Прямоугольник с кругленными углами) */
         .request-card {
             background: #ffffff;
             border: 1px solid #BDC4D4;
-            border-radius: 14px; /* Закругленные углы по описанию */
+            border-radius: 14px; /* Скругленные углы */
             padding: 24px;
-            box-shadow: 0 4px 12px rgba(15, 26, 43, 0.02);
+            box-shadow: 0 2px 8px rgba(15, 26, 43, 0.03);
             display: grid;
             grid-template-areas:
                 "city file"
                 "text text"
                 "status date";
             grid-template-rows: auto 1fr auto;
-            gap: 16px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .request-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(15, 26, 43, 0.06);
+            gap: 14px;
         }
 
         .card-city {
@@ -180,23 +170,21 @@
         .card-file a {
             background-color: #1C2E4A;
             color: #FAF7F2;
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
             text-decoration: none;
-            transition: opacity 0.2s;
         }
-        .card-file a:hover { opacity: 0.9; }
 
         .card-text {
             grid-area: text;
-            color: #0F1A2B; /* Deep Navy для основного текста */
-            font-size: 1rem;
+            color: #0F1A2B; /* Deep Navy для текста */
+            font-size: 0.98rem;
             line-height: 1.6;
         }
 
-        /* Статус, время и даты обработки */
+        /* Статус и дата обработки (снизу слева) */
         .card-status-block {
             grid-area: status;
             font-size: 0.85rem;
@@ -207,8 +195,8 @@
 
         .status-badge {
             display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
             font-weight: 600;
             font-size: 0.75rem;
             background-color: #FAF7F2;
@@ -217,10 +205,11 @@
             border: 1px solid #BDC4D4;
         }
 
+        /* Дата и время написания (снизу справа) */
         .card-date-block {
             grid-area: date;
             font-size: 0.85rem;
-            color: #52677D; /* Dusty Blue для даты/времени отправки */
+            color: #52677D; /* Dusty Blue для времени отправки */
             text-align: right;
             align-self: end;
             font-weight: 500;
@@ -229,20 +218,19 @@
 </head>
 <body>
 
-    <!-- Стартовый полноэкранный блок по макету Figma -->
+    <!-- 1. Стартовый полноэкранный блок из Figma -->
     <div class="welcome-screen">
         <h1>Банк инициатив<br>граждан</h1>
     </div>
 
-    <!-- Основная рабочая область, которая начинается ниже при прокрутке -->
+    <!-- 2. Рабочая область (Начинается ниже заголовка) -->
     <div class="main-content">
-        <!-- Сюда JS вставит новые вкладки-язычки -->
+        <!-- Вкладки-язычки сайта -->
         <div class="tabs-container" id="tabs"></div>
 
-        <!-- Сюда JS вставит контент (папки) -->
+        <!-- Контент без рамок (подтемы на фоне) -->
         <div id="panels"></div>
     </div>
-
     <script>
     async function initSite() {
         try {

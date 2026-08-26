@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мониторинг Инициатив</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { color: #333; }
+
+        /* Дизайн вкладок в стиле вкладок браузера / папок */
+        .tabs-container {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+            margin-bottom: 20px;
+            gap: 5px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            font-weight: bold;
+            color: #555;
+            transition: all 0.2s;
+            position: relative;
+            bottom: -2px;
+        }
+        .tab.active {
+            background-color: #ffffff;
+            color: #000;
+            border-bottom: 2px solid #ffffff;
+            z-index: 2;
+        }
+
+        /* Панели контента */
+        .tab-panel {
+            display: none;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .tab-panel.active { display: block; }
+
+        /* Стилизация выпадающих списков подтем */
+        details {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        summary {
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+        }
+        details[open] summary {
+            border-bottom: 1px solid #ddd;
+        }
+        .requests-list {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Закругленная карточка заявки по вашему описанию */
+        .request-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px; /* Скругленные углы */
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            display: grid;
+            grid-template-areas: 
+                "city . "
+                "text text"
+                "status date";
+            grid-template-rows: auto 1fr auto;
+            gap: 10px;
+        }
+        .card-city {
+            grid-area: city;
+            font-weight: bold;
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+        .card-text {
+            grid-area: text;
+            color: #333;
+            line-height: 1.5;
+        }
+        .card-status-block {
+            grid-area: status;
+            font-size: 0.85rem;
+            color: #666;
+            align-self: end;
+        }
+        .card-date-block {
+            grid-area: date;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: right;
+            align-self: end;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Банк инициатив граждан</h1>
+
+    <!-- Сюда JavaScript вставит вкладки-язычки -->
+    <div class="tabs-container" id="tabs"></div>
+
+    <!-- Сюда JavaScript вставит контент для каждой вкладки -->
+    <div id="panels"></div>
+
+    <script>
+        // Функция для загрузки данных и построения интерфейса
+        async function initSite() {
+            try {
+                // Загружаем наш файл data.json
+                const response = await fetch('data.json');
+                const data = await response.json();
+
+                // Группируем данные: Тема -> Подтема -> Список заявок
+                const structuredData = {};
+
+                data.forEach(item => {
+                    if (!structuredData[item.theme]) {
+                        structuredData[item.theme] = {};
+                    }
+                    if (!structuredData[item.theme][item.subtheme]) {
+                        structuredData[item.theme][item.subtheme] = [];
+                    }
+                    structuredData[item.theme][item.subtheme].push(item);
+                });
+
+                const tabsContainer = document.getElementById('tabs');
+                const panelsContainer = document.getElementById('panels');
+                
+                let isFirst = true;
+
+                // Обходим сгруппированные темы для создания вкладок
+                for (const theme in structuredData) {
+                    const themeId = 'theme-' + Math.random().toString(36).substr(2, 9);
+
+                    // 1. Создаем вкладку (язычок папки)
+                    const tab = document.createElement('div');
+                    tab.className = `tab ${isFirst ? 'active' : ''}`;
+                    // Сократим название темы для компактности на панели вкладок
+                    tab.innerText = theme.length > 40 ? theme.substring(0, 40) + '...' : theme;
+                    tab.title = theme; // Полное название при наведении
+                    tab.setAttribute('data-target', themeId);
+                    tabsContainer.appendChild(tab);
+
+                    // 2. Создаем панель контента для этой темы
+                    const panel = document.createElement('div');
+                    panel.className = `tab-panel ${isFirst ? 'active' : ''}`;
+                    panel.id = themeId;
+
+                    // Заполняем панель подтемами
+                    for (const subtheme in structuredData[theme]) {
+                        const details = document.createElement('details');
+                        const summary = document.createElement('summary');
+                        summary.innerText = `${subtheme} (${structuredData[theme][subtheme].length})`;
+                        details.appendChild(summary);
+
+                        const requestsList = document.createElement('div');
+                        requestsList.className = 'requests-list';
+
+                        // Заполняем подтему карточками заявок
+                        structuredData[theme][subtheme].forEach(req => {
+                            const card = document.createElement('div');
+                            card.className = 'request-card';
+                            
+                            // Заполняем сетку карточки по вашей схеме позиционирования
+                            card.innerHTML = `
+                                <div class="card-city">${req.city}</div>
+                                <div class="card-text">${req.text}</div>
+                                <div class="card-status-block">
+                                    <b>Статус:</b> ${req.status || 'Не указан'}<br>
+                                    <b>Обработано:</b> ${req.status_date || '—'}
+                                </div>
+                                <div class="card-date-block">
+                                    ${req.date} в ${req.time}
+                                </div>
+                            `;
+                            requestsList.appendChild(card);
+                        });
+
+                        details.appendChild(requestsList);
+                        panel.appendChild(details);
+                    }
+
+                    panelsContainer.appendChild(panel);
+                    isFirst = false;
+                }
+
+                // Навешиваем событие клика для переключения вкладок
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+                        tab.classList.add('active');
+                        document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+                    });
+                });
+
+            } catch (error) {
+                console.error("Ошибка загрузки данных:", error);
+                document.getElementById('panels').innerText = "Не удалось загрузить данные из таблицы. Убедитесь, что файл data.json находится в той же папке.";
+            }
+        }
+
+        // Запуск генерации сайта
+        initSite();
+    </script>
+</body>
+</html>

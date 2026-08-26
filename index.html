@@ -148,12 +148,13 @@
             const response = await fetch('data.json');
             const data = await response.json();
 
-            // Группируем данные строго по вашим английским ключам: theme -> subtheme
             const structuredData = {};
 
             data.forEach(item => {
-                const theme = item.theme || "Без темы";
-                const subtheme = item.subtheme || "Общее";
+                // Универсальный поиск темы (проверяет все варианты)
+                const theme = item.theme || item["Тема"] || item.Theme || "Без темы";
+                // Универсальный поиск подтемы
+                const subtheme = item.subtheme || item["Подтема"] || item.Subtheme || "Общее";
 
                 if (!structuredData[theme]) {
                     structuredData[theme] = {};
@@ -175,7 +176,6 @@
             for (const theme in structuredData) {
                 const themeId = 'theme-' + Math.random().toString(36).substr(2, 9);
 
-                // 1. Создаем вкладку (язычок папки)
                 const tab = document.createElement('div');
                 tab.className = `tab ${isFirst ? 'active' : ''}`;
                 tab.innerText = theme.length > 40 ? theme.substring(0, 40) + '...' : theme;
@@ -183,12 +183,10 @@
                 tab.setAttribute('data-target', themeId);
                 tabsContainer.appendChild(tab);
 
-                // 2. Создаем панель контента
                 const panel = document.createElement('div');
                 panel.className = `tab-panel ${isFirst ? 'active' : ''}`;
                 panel.id = themeId;
 
-                // Заполняем подтемами
                 for (const subtheme in structuredData[theme]) {
                     const details = document.createElement('details');
                     const summary = document.createElement('summary');
@@ -198,21 +196,21 @@
                     const requestsList = document.createElement('div');
                     requestsList.className = 'requests-list';
 
-                    // Заполняем заявками
                     structuredData[theme][subtheme].forEach(req => {
                         const card = document.createElement('div');
                         card.className = 'request-card';
 
-                        // Извлекаем переменные строго по ключам из вашего JSON
-                        const city = req.city || "Не указан";
-                        const text = req.text || "Текст отсутствует";
-                        const status = req.status || "В обработке";
-                        const statusDate = req.status_date || "—";
-                        const date = req.date || "—";
-                        const time = req.time || "—";
-                        const fileUrl = req.file || "";
+                        // Ищем города, тексты и даты во всех возможных раскладках
+                        const city = req.city || req["Город"] || req.City || "Не указан";
+                        const text = req.text || req["Текст"] || req.Text || "Текст отсутствует";
+                        const status = req.status || req["Статус_инициативы"] || req.Status || "В обработке";
+                        const statusDate = req.status_date || req["Статус_подзадачи"] || req.Status_date || "—";
 
-                        // Проверяем наличие прикрепленного файла
+                        // Защита от пробелов в ключе даты ("Дата " или "Дата")
+                        const date = req.date || req["Дата "] || req["Дата"] || req.Date || "—";
+                        const time = req.time || req["Время"] || req.Time || "—";
+                        const fileUrl = req.file || req["Ссылка на файл"] || req.File || "";
+
                         let fileHTML = '';
                         if (fileUrl && fileUrl.trim() !== "") {
                             fileHTML = `<div class="card-file"><a href="${fileUrl}" target="_blank">📄 Документ</a></div>`;
@@ -241,7 +239,6 @@
                 isFirst = false;
             }
 
-            // Логика переключения
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -254,11 +251,12 @@
 
         } catch (error) {
             console.error("Ошибка:", error);
-            document.getElementById('panels').innerText = "Ошибка загрузки данных. Проверьте структуру файла data.json.";
+            document.getElementById('panels').innerText = "Ошибка загрузки данных.";
         }
     }
 
     initSite();
     </script>
+
 </body>
 </html>

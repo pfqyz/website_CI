@@ -3,137 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Банк инициатив граждан</title>
+    <title>Банк инициатив граждан — Аналитика</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        @import url('https://googleapis.com');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-        /* Общий фон страницы — новый мягкий цвет #F9F5ED */
+        :root {
+            --bg: #F9F5ED;
+            --navy: #0F1A2B;
+            --navy-2: #1C2E4A;
+            --dusty: #52677D;
+            --border: #BDC4D4;
+            --soft: #E6EAEF;
+            --white: #ffffff;
+            --accent: #1C2E4A;
+            --green: #2E7D52;
+            --red: #B23A3A;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F9F5ED;
+            background-color: var(--bg);
             margin: 0;
             padding: 0;
-            color: #0F1A2B; /* Deep Navy */
+            color: var(--navy);
             -webkit-text-size-adjust: 100%;
         }
 
-        /* 1. СТАРТОВЫЙ БЛОК (Адаптивный под экраны смартфонов) */
+        /* СТАРТОВЫЙ БЛОК */
         .welcome-screen {
-            height: 50vh;
+            height: 40vh;
             display: flex;
             align-items: flex-start;
-            padding: 10vh 8vw;
+            padding: 8vh 8vw 4vh;
             box-sizing: border-box;
         }
-
         .welcome-screen h1 {
-            font-size: 3.5rem; /* Размер для смартфонов по умолчанию */
+            font-size: 2.4rem;
             font-weight: 800;
             line-height: 1.15;
-            color: #0F1A2B;
+            color: var(--navy);
             margin: 0;
             letter-spacing: -0.02em;
         }
-
-        /* Настольные мониторы: возвращаем огромный размер заголовка */
         @media (min-width: 768px) {
-            .welcome-screen { height: 70vh; padding: 10vh 10vw; }
-            .welcome-screen h1 { font-size: 6rem; }
+            .welcome-screen { height: 50vh; padding: 10vh 10vw 4vh; }
+            .welcome-screen h1 { font-size: 5rem; }
         }
 
-        /* Рабочая область */
         .main-content {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 0 4vw 60px 4vw;
         }
         @media (min-width: 768px) {
-            .main-content { padding: 0 10vw 100px 10vw; }
+            .main-content { padding: 0 6vw 100px 6vw; }
         }
 
-        /* 2. НАСТРОЙКА ВКЛАДОК (Плавный скролл пальцем на мобилках в стиле Pinterest) */
+        /* KPI КАРТОЧКИ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .kpi-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 2px 8px rgba(15, 26, 43, 0.04);
+        }
+        .kpi-card .label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--dusty);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .kpi-card .value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--navy-2);
+            line-height: 1.1;
+        }
+        .kpi-card .value.small { font-size: 1rem; font-weight: 700; }
+
+        /* ФИЛЬТРЫ */
+        .filters {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .filters label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--dusty);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .filters select, .filters input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 10px;
+            font-size: 0.9rem;
+            color: var(--navy);
+            font-family: inherit;
+        }
+        .filters button {
+            align-self: end;
+            background: var(--navy-2);
+            color: var(--bg);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .filters button:hover { background: var(--navy); }
+        .filters button.reset {
+            background: var(--dusty);
+        }
+        .filters button.reset:hover { background: #435568; }
+
+        /* ГРАФИКИ */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        @media (min-width: 900px) {
+            .charts-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .chart-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(15, 26, 43, 0.04);
+        }
+        .chart-card h3 {
+            margin: 0 0 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy-2);
+        }
+        .chart-wrap {
+            position: relative;
+            height: 300px;
+        }
+
+        /* ЭКСПОРТ */
+        .export-panel {
+            background: var(--navy-2);
+            color: var(--bg);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 28px;
+        }
+        .export-panel h3 {
+            margin: 0 0 6px;
+            font-size: 1.1rem;
+            color: var(--bg);
+        }
+        .export-panel p {
+            margin: 0 0 16px;
+            font-size: 0.88rem;
+            color: var(--border);
+            line-height: 1.5;
+        }
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .export-buttons button {
+            background: var(--bg);
+            color: var(--navy-2);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.88rem;
+            transition: 0.2s;
+        }
+        .export-buttons button:hover { background: #ffffff; }
+        .export-buttons button.primary {
+            background: var(--green);
+            color: #fff;
+        }
+        .export-buttons button.primary:hover { background: #256542; }
+
+        /* ТАБЛИЦА */
+        .table-panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 28px;
+        }
+        .table-panel h3 {
+            margin: 0 0 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy-2);
+        }
+        .table-scroll {
+            max-height: 420px;
+            overflow: auto;
+            border: 1px solid var(--soft);
+            border-radius: 8px;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td {
+            padding: 9px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--soft);
+            vertical-align: top;
+        }
+        th {
+            background: var(--soft);
+            position: sticky;
+            top: 0;
+            font-weight: 700;
+            color: var(--navy-2);
+            white-space: nowrap;
+        }
+        tr:hover { background: #faf8f3; }
+
+        /* ВКЛАДКИ (темы) */
         .tabs-container {
             display: flex;
-            flex-wrap: nowrap; /* Запрещаем перенос строк */
+            flex-wrap: nowrap;
             margin-bottom: 24px;
             gap: 6px;
-            border-bottom: 4px solid #1C2E4A; /* Четкая синяя полоса */
+            border-bottom: 4px solid var(--navy-2);
             padding-bottom: 0;
-            overflow-x: auto; /* Включаем горизонтальную прокрутку пальцем */
-            overflow-y: hidden; /* Намертво убираем вертикальный ползунок */
-            -webkit-overflow-scrolling: touch; /* Делает скролл на iPhone плавным */
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
         }
-
-        /* Скрываем уродливый стандартный ползунок прокрутки в браузерах */
-        .tabs-container::-webkit-scrollbar {
-            display: none;
-        }
-
+        .tabs-container::-webkit-scrollbar { display: none; }
         .tab {
             padding: 12px 20px;
             cursor: pointer;
-            background-color: #52677D; /* Dusty Blue */
-            border: 1px solid #BDC4D4;
+            background-color: var(--dusty);
+            border: 1px solid var(--border);
             border-bottom: none;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
             font-weight: 600;
             font-size: 0.88rem;
-            color: #F9F5ED;
+            color: var(--bg);
             transition: all 0.2s ease;
             white-space: nowrap;
             margin-bottom: -1px;
-            flex-shrink: 0; /* Не дает вкладкам сжиматься и ломать текст */
+            flex-shrink: 0;
         }
         @media (min-width: 768px) {
             .tab { padding: 14px 24px; font-size: 0.95rem; }
         }
-
-        .tab:hover {
-            background-color: #435568;
-        }
-
-        /* АКТИВНАЯ ВКЛАДКА */
+        .tab:hover { background-color: #435568; }
         .tab.active {
-            background-color: #F9F5ED;
-            color: #0F1A2B;
-            border-color: #1C2E4A;
-            border-bottom: 4px solid #F9F5ED;
+            background-color: var(--bg);
+            color: var(--navy);
+            border-color: var(--navy-2);
+            border-bottom: 4px solid var(--bg);
             margin-bottom: -4px;
             position: relative;
             z-index: 2;
         }
 
-        /* 3. КОНТЕНТНАЯ ПАНЕЛЬ */
-        .tab-panel {
-            display: none;
-            background: transparent !important;
-            padding: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-            animation: fadeIn 0.3s ease;
-        }
+        .tab-panel { display: none; animation: fadeIn 0.3s ease; }
         .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* 4. ПОДТЕМЫ НА ОБЩЕМ ФОНЕ */
+        /* ПОДТЕМЫ */
         details {
-            background: #BDC4D4;
+            background: var(--border);
             margin-bottom: 12px;
-            border: 1px solid #BDC4D4;
+            border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
         }
-
         summary {
             padding: 14px 18px;
             font-weight: 600;
             font-size: 0.95rem;
-            color: #0F1A2B;
+            color: var(--navy);
             cursor: pointer;
             outline: none;
             user-select: none;
@@ -145,15 +320,10 @@
         @media (min-width: 768px) {
             summary { padding: 16px 20px; font-size: 1.05rem; }
         }
-
-        details[open] {
-            background: #ffffff;
-            border-color: #BDC4D4;
-        }
-
+        details[open] { background: var(--white); }
         details[open] summary {
-            border-bottom: 1px solid #BDC4D4;
-            background: #E6EAEF;
+            border-bottom: 1px solid var(--border);
+            background: var(--soft);
         }
 
         .requests-list {
@@ -166,19 +336,16 @@
             .requests-list { padding: 20px; gap: 16px; }
         }
 
-        /* 5. КАРТОЧКА ИНИЦИАТИВЫ (Адаптивная сетка) */
         .request-card {
-            background: #ffffff;
-            border: 1px solid #BDC4D4;
+            background: var(--white);
+            border: 1px solid var(--border);
             border-radius: 14px;
             padding: 16px;
             box-shadow: 0 2px 8px rgba(15, 26, 43, 0.03);
             display: flex;
-            flex-direction: column; /* На мобильных выстраиваем элементы друг под другом */
+            flex-direction: column;
             gap: 12px;
         }
-
-        /* На компьютерах включаем красивую Grid-сетку */
         @media (min-width: 768px) {
             .request-card {
                 padding: 24px;
@@ -191,26 +358,21 @@
                 gap: 14px;
             }
         }
-
         .card-city {
             grid-area: city;
             font-weight: 700;
-            color: #1C2E4A;
+            color: var(--navy-2);
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.03em;
         }
-
-        .card-file {
-            grid-area: file;
-            text-align: left;
-        }
+        .card-file { grid-area: file; text-align: left; }
         @media (min-width: 768px) {
             .card-file { text-align: right; align-self: center; }
         }
         .card-file a {
-            background-color: #1C2E4A;
-            color: #F9F5ED;
+            background-color: var(--navy-2);
+            color: var(--bg);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -218,51 +380,73 @@
             text-decoration: none;
             display: inline-block;
         }
-
         .card-text {
             grid-area: text;
-            color: #0F1A2B;
+            color: var(--navy);
             font-size: 0.93rem;
             line-height: 1.5;
-            word-break: break-word; /* Защита от вылезания длинных слов */
+            word-break: break-word;
         }
         @media (min-width: 768px) {
             .card-text { font-size: 0.98rem; line-height: 1.6; }
         }
-
         .card-status-block {
             grid-area: status;
             font-size: 0.8rem;
-            color: #52677D;
+            color: var(--dusty);
             line-height: 1.4;
-            border-top: 1px solid #E6EAEF; /* Разделитель на мобилках */
+            border-top: 1px solid var(--soft);
             padding-top: 10px;
         }
         @media (min-width: 768px) {
-            .card-status-block { font-size: 0.85rem; line-height: 1.5; border-top: none; padding-top: 0; align-self: end; }
+            .card-status-block {
+                font-size: 0.85rem;
+                border-top: none;
+                padding-top: 0;
+                align-self: end;
+            }
         }
-
-        .status-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.72rem;
-            background-color: #F9F5ED;
-            color: #52677D;
-            margin-left: 4px;
-            border: 1px solid #BDC4D4;
-        }
-
         .card-date-block {
             grid-area: date;
             font-size: 0.8rem;
-            color: #52677D;
+            color: var(--dusty);
             text-align: left;
             font-weight: 500;
         }
         @media (min-width: 768px) {
             .card-date-block { font-size: 0.85rem; text-align: right; align-self: end; }
+        }
+
+        /* Секция заголовков */
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--navy-2);
+            margin: 0 0 16px;
+            letter-spacing: -0.01em;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--navy-2);
+            color: var(--bg);
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 999;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @media print {
+            .filters, .export-buttons, .tabs-container, .toast { display: none; }
+            body { background: #fff; }
         }
     </style>
 </head>
@@ -273,126 +457,105 @@
     </div>
 
     <div class="main-content">
-        <!-- Адаптивный контейнер вкладок с горизонтальным скроллом -->
+
+        <!-- KPI -->
+        <h2 class="section-title">Общая статистика</h2>
+        <div class="kpi-grid" id="kpiGrid"></div>
+
+        <!-- ФИЛЬТРЫ -->
+        <h2 class="section-title">Фильтры</h2>
+        <div class="filters">
+            <div>
+                <label for="fTheme">Тема</label>
+                <select id="fTheme"><option value="">Все темы</option></select>
+            </div>
+            <div>
+                <label for="fCity">Город / район</label>
+                <select id="fCity"><option value="">Все</option></select>
+            </div>
+            <div>
+                <label for="fSub">Подтема</label>
+                <select id="fSub"><option value="">Все подтемы</option></select>
+            </div>
+            <div>
+                <label for="fFrom">Дата от</label>
+                <input type="date" id="fFrom">
+            </div>
+            <div>
+                <label for="fTo">Дата до</label>
+                <input type="date" id="fTo">
+            </div>
+            <div>
+                <label for="fSearch">Поиск по тексту</label>
+                <input type="text" id="fSearch" placeholder="Например: дороги">
+            </div>
+            <div>
+                <label for="fFile">Документ</label>
+                <select id="fFile">
+                    <option value="">Все</option>
+                    <option value="yes">С файлом</option>
+                    <option value="no">Без файла</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button id="applyFilter" style="flex:1;">Применить</button>
+                <button class="reset" id="resetFilter" style="flex:1;">Сбросить</button>
+            </div>
+        </div>
+
+        <!-- ГРАФИКИ -->
+        <h2 class="section-title">Аналитика и графики</h2>
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Инициативы по темам</h3>
+                <div class="chart-wrap"><canvas id="chartThemes"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Топ-10 городов / районов</h3>
+                <div class="chart-wrap"><canvas id="chartCities"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Динамика по датам</h3>
+                <div class="chart-wrap"><canvas id="chartTimeline"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Распределение по подтемам</h3>
+                <div class="chart-wrap"><canvas id="chartSubthemes"></canvas></div>
+            </div>
+        </div>
+
+        <!-- ЭКСПОРТ -->
+        <div class="export-panel">
+            <h3> Экспорт статистики</h3>
+            <p>Скачайте полный файл со всей статистикой по текущей выборке: сводные показатели, разбивка по темам, городам, подтемам, временная динамика и исходные данные.</p>
+            <div class="export-buttons">
+                <button class="primary" onclick="exportJSON()">⬇ Скачать JSON (все данные)</button>
+                <button onclick="exportCSV()">⬇ Скачать CSV</button>
+                <button onclick="exportReport()"> Печатный отчёт</button>
+                <button onclick="exportSummaryTXT()"> Краткая сводка (TXT)</button>
+            </div>
+        </div>
+
+        <!-- ТАБЛИЦА -->
+        <div class="table-panel">
+            <h3> Все инициативы (отфильтрованные)</h3>
+            <div class="table-scroll">
+                <table id="dataTable">
+                    <thead><tr></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКИ ПО ТЕМАМ -->
+        <h2 class="section-title">Инициативы по темам</h2>
         <div class="tabs-container" id="tabs"></div>
         <div id="panels"></div>
+
     </div>
 
-    <script>
-    async function initSite() {
-        try {
-            const response = await fetch('data.json');
-            const data = await response.json();
+    <div class="toast" id="toast"></div>
 
-            const structuredData = {};
-
-            data.forEach(item => {
-                // Универсальный поиск темы (проверяет все варианты)
-                const theme = item.theme || item["Тема"] || item.Theme || "Без темы";
-                // Универсальный поиск подтемы
-                const subtheme = item.subtheme || item["Подтема"] || item.Subtheme || "Общее";
-
-                if (!structuredData[theme]) {
-                    structuredData[theme] = {};
-                }
-                if (!structuredData[theme][subtheme]) {
-                    structuredData[theme][subtheme] = [];
-                }
-                structuredData[theme][subtheme].push(item);
-            });
-
-            const tabsContainer = document.getElementById('tabs');
-            const panelsContainer = document.getElementById('panels');
-
-            tabsContainer.innerHTML = '';
-            panelsContainer.innerHTML = '';
-
-            let isFirst = true;
-
-            for (const theme in structuredData) {
-                const themeId = 'theme-' + Math.random().toString(36).substr(2, 9);
-
-                const tab = document.createElement('div');
-                tab.className = `tab ${isFirst ? 'active' : ''}`;
-                tab.innerText = theme.length > 40 ? theme.substring(0, 40) + '...' : theme;
-                tab.title = theme;
-                tab.setAttribute('data-target', themeId);
-                tabsContainer.appendChild(tab);
-
-                const panel = document.createElement('div');
-                panel.className = `tab-panel ${isFirst ? 'active' : ''}`;
-                panel.id = themeId;
-
-                for (const subtheme in structuredData[theme]) {
-                    const details = document.createElement('details');
-                    const summary = document.createElement('summary');
-                    summary.innerText = `${subtheme} (${structuredData[theme][subtheme].length})`;
-                    details.appendChild(summary);
-
-                    const requestsList = document.createElement('div');
-                    requestsList.className = 'requests-list';
-
-                    structuredData[theme][subtheme].forEach(req => {
-                        const card = document.createElement('div');
-                        card.className = 'request-card';
-
-                        // Ищем города, тексты и даты во всех возможных раскладках
-                        const city = req.city || req["Город"] || req.City || "Не указан";
-                        const text = req.text || req["Текст"] || req.Text || "Текст отсутствует";
-                        const status = req.status || req["Статус_инициативы"] || req.Status || "В обработке";
-                        const statusDate = req.status_date || req["Статус_подзадачи"] || req.Status_date || "—";
-
-                        // Защита от пробелов в ключе даты ("Дата " или "Дата")
-                        const date = req.date || req["Дата "] || req["Дата"] || req.Date || "—";
-                        const time = req.time || req["Время"] || req.Time || "—";
-                        const fileUrl = req.file || req["Ссылка на файл"] || req.File || "";
-
-                        let fileHTML = '';
-                        if (fileUrl && fileUrl.trim() !== "") {
-                            fileHTML = `<div class="card-file"><a href="${fileUrl}" target="_blank">📄 Документ</a></div>`;
-                        }
-
-                        card.innerHTML = `
-                            <div class="card-city">${city}</div>
-                            ${fileHTML}
-                            <div class="card-text">${text}</div>
-                            <div class="card-status-block">
-                                <b>Статус:</b> ${status}<br>
-                                <b>Обработано:</b> ${statusDate}
-                            </div>
-                            <div class="card-date-block">
-                                ${date} в ${time}
-                            </div>
-                        `;
-                        requestsList.appendChild(card);
-                    });
-
-                    details.appendChild(requestsList);
-                    panel.appendChild(details);
-                }
-
-                panelsContainer.appendChild(panel);
-                isFirst = false;
-            }
-
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-
-                    tab.classList.add('active');
-                    document.getElementById(tab.getAttribute('data-target')).classList.add('active');
-                });
-            });
-
-        } catch (error) {
-            console.error("Ошибка:", error);
-            document.getElementById('panels').innerText = "Ошибка загрузки данных.";
-        }
-    }
-
-    initSite();
-    </script>
-
+    <script src="app.js"></script>
 </body>
 </html>

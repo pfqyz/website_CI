@@ -7,157 +7,104 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-:root{
-  --bg:#F9F5ED; --navy:#0F1A2B; --navy-2:#1C2E4A; --dusty:#52677D;
-  --border:#BDC4D4; --soft:#E6EAEF; --white:#fff; --green:#2E7D52; --red:#B23A3A;
-}
+:root{--bg:#F9F5ED;--navy:#0F1A2B;--navy-2:#1C2E4A;--dusty:#52677D;--border:#BDC4D4;--soft:#E6EAEF;--white:#fff;--green:#2E7D52;--red:#B23A3A}
 *{box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);margin:0;padding:0;color:var(--navy);-webkit-text-size-adjust:100%}
-
+body{font-family:'Inter',sans-serif;background:var(--bg);margin:0;color:var(--navy)}
 .welcome-screen{height:40vh;display:flex;align-items:flex-start;padding:8vh 8vw 4vh}
-.welcome-screen h1{font-size:2.4rem;font-weight:800;line-height:1.15;margin:0;letter-spacing:-0.02em}
+.welcome-screen h1{font-size:2.4rem;font-weight:800;line-height:1.15;margin:0;letter-spacing:-.02em}
 @media(min-width:768px){.welcome-screen{height:50vh;padding:10vh 10vw 4vh}.welcome-screen h1{font-size:5rem}}
-
 .main-content{max-width:1300px;margin:0 auto;padding:0 4vw 60px}
 @media(min-width:768px){.main-content{padding:0 6vw 100px}}
-
-.section-title{font-size:1.3rem;font-weight:800;color:var(--navy-2);margin:0 0 16px;letter-spacing:-0.01em}
-
+.section-title{font-size:1.3rem;font-weight:800;color:var(--navy-2);margin:0 0 16px}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px}
 .kpi-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(15,26,43,.04)}
 .kpi-card .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--dusty);font-weight:600;margin-bottom:8px}
 .kpi-card .value{font-size:1.6rem;font-weight:800;color:var(--navy-2);line-height:1.1}
-
 .filters{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.filters label{display:block;font-size:.75rem;font-weight:600;color:var(--dusty);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
+.filters label{display:block;font-size:.75rem;font-weight:600;color:var(--dusty);margin-bottom:4px;text-transform:uppercase}
 .filters select,.filters input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 10px;font-size:.9rem;color:var(--navy);font-family:inherit}
-.filters button{align-self:end;background:var(--navy-2);color:var(--bg);border:none;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-family:inherit;font-size:.9rem;transition:.2s}
-.filters button:hover{background:var(--navy)}
+.filters button{align-self:end;background:var(--navy-2);color:var(--bg);border:none;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-family:inherit;font-size:.9rem}
 .filters button.reset{background:var(--dusty)}
-.filters button.reset:hover{background:#435568}
-
 .charts-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:28px}
 @media(min-width:900px){.charts-grid{grid-template-columns:1fr 1fr}}
 .chart-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(15,26,43,.04)}
 .chart-card h3{margin:0 0 14px;font-size:1rem;font-weight:700;color:var(--navy-2)}
 .chart-wrap{position:relative;height:300px}
-
 .export-panel{background:var(--navy-2);color:var(--bg);border-radius:14px;padding:22px;margin-bottom:28px}
-.export-panel h3{margin:0 0 6px;font-size:1.1rem;color:var(--bg)}
+.export-panel h3{margin:0 0 6px;font-size:1.1rem}
 .export-panel p{margin:0 0 16px;font-size:.88rem;color:var(--border);line-height:1.5}
 .export-buttons{display:flex;gap:10px;flex-wrap:wrap}
-.export-buttons button{background:var(--bg);color:var(--navy-2);border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.88rem;transition:.2s}
-.export-buttons button:hover{background:#fff}
+.export-buttons button{background:var(--bg);color:var(--navy-2);border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.88rem}
 .export-buttons button.primary{background:var(--green);color:#fff}
-.export-buttons button.primary:hover{background:#256542}
-
 .table-panel{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:28px}
 .table-panel h3{margin:0 0 14px;font-size:1rem;font-weight:700;color:var(--navy-2)}
 .table-scroll{max-height:420px;overflow:auto;border:1px solid var(--soft);border-radius:8px}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--soft);vertical-align:top}
-th{background:var(--soft);position:sticky;top:0;font-weight:700;color:var(--navy-2);white-space:nowrap}
-tr:hover{background:#faf8f3}
-
-.tabs-container{display:flex;flex-wrap:nowrap;margin-bottom:24px;gap:6px;border-bottom:4px solid var(--navy-2);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+th{background:var(--soft);position:sticky;top:0;font-weight:700;color:var(--navy-2)}
+.tabs-container{display:flex;flex-wrap:nowrap;margin-bottom:24px;gap:6px;border-bottom:4px solid var(--navy-2);overflow-x:auto;overflow-y:hidden}
 .tabs-container::-webkit-scrollbar{display:none}
-.tab{padding:12px 20px;cursor:pointer;background-color:var(--dusty);border:1px solid var(--border);border-bottom:none;border-top-left-radius:12px;border-top-right-radius:12px;font-weight:600;font-size:.88rem;color:var(--bg);transition:all .2s;white-space:nowrap;margin-bottom:-1px;flex-shrink:0}
-@media(min-width:768px){.tab{padding:14px 24px;font-size:.95rem}}
-.tab:hover{background-color:#435568}
+.tab{padding:12px 20px;cursor:pointer;background-color:var(--dusty);border:1px solid var(--border);border-bottom:none;border-top-left-radius:12px;border-top-right-radius:12px;font-weight:600;font-size:.88rem;color:var(--bg);white-space:nowrap;margin-bottom:-1px;flex-shrink:0}
 .tab.active{background-color:var(--bg);color:var(--navy);border-color:var(--navy-2);border-bottom:4px solid var(--bg);margin-bottom:-4px;position:relative;z-index:2}
-
-.tab-panel{display:none;animation:fadeIn .3s}
-.tab-panel.active{display:block}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
+.tab-panel{display:none}.tab-panel.active{display:block}
 details{background:var(--border);margin-bottom:12px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-summary{padding:14px 18px;font-weight:600;font-size:.95rem;color:var(--navy);cursor:pointer;outline:none;user-select:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
-@media(min-width:768px){summary{padding:16px 20px;font-size:1.05rem}}
+summary{padding:14px 18px;font-weight:600;font-size:.95rem;color:var(--navy);cursor:pointer}
 details[open]{background:var(--white)}
 details[open] summary{border-bottom:1px solid var(--border);background:var(--soft)}
 .requests-list{padding:14px;display:flex;flex-direction:column;gap:14px}
-@media(min-width:768px){.requests-list{padding:20px;gap:16px}}
-.request-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(15,26,43,.03);display:flex;flex-direction:column;gap:12px}
+.request-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
 @media(min-width:768px){.request-card{padding:24px;display:grid;grid-template-areas:"city file" "text text" "status date";grid-template-rows:auto 1fr auto;gap:14px}}
-.card-city{grid-area:city;font-weight:700;color:var(--navy-2);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
-.card-file{grid-area:file;text-align:left}
+.card-city{grid-area:city;font-weight:700;color:var(--navy-2);font-size:.85rem;text-transform:uppercase}
+.card-file{grid-area:file}
 @media(min-width:768px){.card-file{text-align:right;align-self:center}}
-.card-file a{background-color:var(--navy-2);color:var(--bg);padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:600;text-decoration:none;display:inline-block}
-.card-text{grid-area:text;color:var(--navy);font-size:.93rem;line-height:1.5;word-break:break-word}
-@media(min-width:768px){.card-text{font-size:.98rem;line-height:1.6}}
-.card-status-block{grid-area:status;font-size:.8rem;color:var(--dusty);line-height:1.4;border-top:1px solid var(--soft);padding-top:10px}
-@media(min-width:768px){.card-status-block{font-size:.85rem;border-top:none;padding-top:0;align-self:end}}
-.card-date-block{grid-area:date;font-size:.8rem;color:var(--dusty);text-align:left;font-weight:500}
-@media(min-width:768px){.card-date-block{font-size:.85rem;text-align:right;align-self:end}}
-
-.econ-panel{background:linear-gradient(135deg,#1C2E4A 0%,#2E7D52 100%);color:#F9F5ED;border-radius:14px;padding:24px;margin-bottom:28px;box-shadow:0 4px 16px rgba(15,26,43,.15)}
+.card-file a{background-color:var(--navy-2);color:var(--bg);padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:600;text-decoration:none}
+.card-text{grid-area:text;font-size:.93rem;line-height:1.5;word-break:break-word}
+.card-status-block{grid-area:status;font-size:.8rem;color:var(--dusty);border-top:1px solid var(--soft);padding-top:10px}
+@media(min-width:768px){.card-status-block{border-top:none;padding-top:0;align-self:end}}
+.card-date-block{grid-area:date;font-size:.8rem;color:var(--dusty)}
+@media(min-width:768px){.card-date-block{text-align:right;align-self:end}}
+.econ-panel{background:linear-gradient(135deg,#1C2E4A 0%,#2E7D52 100%);color:#F9F5ED;border-radius:14px;padding:24px;margin-bottom:28px}
 .econ-summary{display:grid;grid-template-columns:1fr;gap:20px}
 @media(min-width:768px){.econ-summary{grid-template-columns:1fr 1.4fr}}
-.econ-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:rgba(249,245,237,.7);font-weight:600;margin-bottom:10px}
-.econ-value{font-size:2.2rem;font-weight:800;line-height:1.1;letter-spacing:-.02em}
+.econ-label{font-size:.78rem;text-transform:uppercase;color:rgba(249,245,237,.7);font-weight:600;margin-bottom:10px}
+.econ-value{font-size:2.2rem;font-weight:800;line-height:1.1}
 .econ-sub{font-size:.88rem;color:rgba(249,245,237,.75);margin-top:8px}
 .econ-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 .econ-item{background:rgba(249,245,237,.1);border-radius:10px;padding:12px 14px}
-.econ-item .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:rgba(249,245,237,.7);font-weight:600;margin-bottom:4px}
+.econ-item .k{font-size:.72rem;text-transform:uppercase;color:rgba(249,245,237,.7);font-weight:600;margin-bottom:4px}
 .econ-item .v{font-size:1.05rem;font-weight:700}
-.econ-item .c{font-size:.75rem;color:rgba(249,245,237,.65);margin-top:2px}
-
-.badge{display:inline-block;padding:3px 9px;border-radius:10px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
-.badge.done{background:#D4EDDA;color:#155724}
-.badge.progress{background:#FFF3CD;color:#856404}
-.badge.rejected{background:#F8D7DA;color:#721C24}
-.badge.unknown{background:#E6EAEF;color:#52677D}
-
+.econ-item .c{font-size:.75rem;color:rgba(249,245,237,.65)}
+.error-box{background:#F8D7DA;border:1px solid #721C24;color:#721C24;padding:16px;border-radius:12px;margin-bottom:20px;font-weight:600}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy-2);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:600;font-size:.9rem;opacity:0;transition:.3s;z-index:999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-.error-box{background:#F8D7DA;border:1px solid #721C24;color:#721C24;padding:16px;border-radius:12px;margin-bottom:20px;font-weight:600}
 </style>
 </head>
 <body>
-
-<div class="welcome-screen">
-  <h1>Банк инициатив<br>граждан</h1>
-</div>
-
+<div class="welcome-screen"><h1>Банк инициатив<br>граждан</h1></div>
 <div class="main-content">
-
   <div id="errorBox"></div>
-
   <h2 class="section-title">Общая статистика</h2>
   <div class="kpi-grid" id="kpiGrid"></div>
-
   <h2 class="section-title">Фильтры</h2>
   <div class="filters">
-    <div><label for="fTheme">Тема</label><select id="fTheme"><option value="">Все темы</option></select></div>
-    <div><label for="fCity">Город / район</label><select id="fCity"><option value="">Все</option></select></div>
-    <div><label for="fSub">Подтема</label><select id="fSub"><option value="">Все подтемы</option></select></div>
-    <div><label for="fFrom">Дата от</label><input type="date" id="fFrom"></div>
-    <div><label for="fTo">Дата до</label><input type="date" id="fTo"></div>
-    <div><label for="fSearch">Поиск по тексту</label><input type="text" id="fSearch" placeholder="Например: дороги"></div>
-    <div><label for="fFile">Документ</label><select id="fFile"><option value="">Все</option><option value="yes">С файлом</option><option value="no">Без файла</option></select></div>
-    <div style="display:flex;gap:8px">
-      <button id="applyFilter" style="flex:1">Применить</button>
-      <button class="reset" id="resetFilter" style="flex:1">Сбросить</button>
-    </div>
+    <div><label>Тема</label><select id="fTheme"><option value="">Все темы</option></select></div>
+    <div><label>Город</label><select id="fCity"><option value="">Все</option></select></div>
+    <div><label>Подтема</label><select id="fSub"><option value="">Все подтемы</option></select></div>
+    <div><label>Дата от</label><input type="date" id="fFrom"></div>
+    <div><label>Дата до</label><input type="date" id="fTo"></div>
+    <div><label>Поиск</label><input type="text" id="fSearch" placeholder="Например: дороги"></div>
+    <div><label>Документ</label><select id="fFile"><option value="">Все</option><option value="yes">С файлом</option><option value="no">Без файла</option></select></div>
+    <div style="display:flex;gap:8px"><button id="applyFilter" style="flex:1">Применить</button><button class="reset" id="resetFilter" style="flex:1">Сбросить</button></div>
   </div>
-
   <h2 class="section-title">Завершённые обращения</h2>
   <div class="kpi-grid" id="completedGrid"></div>
-
   <h2 class="section-title">💰 Экономический эффект</h2>
   <div class="econ-panel">
     <div class="econ-summary">
-      <div>
-        <div class="econ-label">Суммарный потенциальный эффект</div>
-        <div class="econ-value" id="econTotal">—</div>
-        <div class="econ-sub" id="econPerIdea">—</div>
-      </div>
+      <div><div class="econ-label">Суммарный потенциальный эффект</div><div class="econ-value" id="econTotal">—</div><div class="econ-sub" id="econPerIdea">—</div></div>
       <div class="econ-breakdown" id="econBreakdown"></div>
     </div>
   </div>
-
   <h2 class="section-title">Аналитика и графики</h2>
   <div class="charts-grid">
     <div class="chart-card"><h3>Инициативы по темам</h3><div class="chart-wrap"><canvas id="chartThemes"></canvas></div></div>
@@ -167,44 +114,188 @@ details[open] summary{border-bottom:1px solid var(--border);background:var(--sof
     <div class="chart-card"><h3>Экономический эффект по категориям</h3><div class="chart-wrap"><canvas id="chartEcon"></canvas></div></div>
     <div class="chart-card"><h3>Статусы обращений</h3><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div>
   </div>
-
   <div class="table-panel">
     <h3>🏆 Топ-10 инициатив по экономическому эффекту</h3>
     <div class="table-scroll">
-      <table id="econTable">
-        <thead><tr><th>#</th><th>Город</th><th>Подтема</th><th>Категория</th><th>Эффект, ₽</th><th>Текст</th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <table id="econTable"><thead><tr><th>#</th><th>Город</th><th>Подтема</th><th>Категория</th><th>Эффект</th><th>Текст</th></tr></thead><tbody></tbody></table>
     </div>
   </div>
-
   <div class="export-panel">
-    <h3> Экспорт статистики</h3>
-    <p>Скачайте полный файл со всей статистикой: сводные показатели, разбивка по темам/городам/подтемам, временная динамика, экономический эффект и исходные данные.</p>
+    <h3>📊 Экспорт статистики</h3>
+    <p>Скачайте полный файл со всей статистикой по текущей выборке.</p>
     <div class="export-buttons">
-      <button class="primary" onclick="exportJSON()">⬇ Скачать JSON (все данные)</button>
-      <button onclick="exportCSV()">⬇ Скачать CSV</button>
-      <button onclick="exportReport()"> Печатный отчёт</button>
-      <button onclick="exportSummaryTXT()"> Краткая сводка (TXT)</button>
-      <button onclick="exportEconomicJSON()"> Экономический эффект (JSON)</button>
-      <button onclick="exportCompletedCSV()"> Завершённые (CSV)</button>
+      <button class="primary" onclick="exportJSON()">⬇ JSON</button>
+      <button onclick="exportCSV()">⬇ CSV</button>
+      <button onclick="exportReport()">🖨 Печатный отчёт</button>
+      <button onclick="exportSummaryTXT()">📄 Сводка TXT</button>
+      <button onclick="exportEconomicJSON()">💾 Эффект JSON</button>
+      <button onclick="exportCompletedCSV()">✅ Завершённые CSV</button>
     </div>
   </div>
-
   <div class="table-panel">
-    <h3> Все инициативы (отфильтрованные)</h3>
-    <div class="table-scroll">
-      <table id="dataTable"><thead><tr></tr></thead><tbody></tbody></table>
-    </div>
+    <h3>📋 Все инициативы</h3>
+    <div class="table-scroll"><table id="dataTable"><thead><tr></tr></thead><tbody></tbody></table></div>
   </div>
-
   <h2 class="section-title">Инициативы по темам</h2>
   <div class="tabs-container" id="tabs"></div>
   <div id="panels"></div>
-
 </div>
-
 <div class="toast" id="toast"></div>
-<script src="app.js"></script>
+
+<script>
+/* ============================================================
+   ДАННЫЕ ВШИТЫ В ФАЙЛ — не нужен data.json, не нужен fetch
+   ============================================================ */
+const RAW = /* ЗДЕСЬ ВАШ МАССИВ ИЗ data.json */ [];
+
+/* ЕСЛИ МАССИВ СЛИШКОМ БОЛЬШОЙ — вставьте его сюда отдельной строкой:
+   const RAW = [...]; // ← вставьте содержимое data.json целиком
+*/
+
+/* ============================================================
+   ДАЛЬШЕ — ЛОГИКА (тот же app.js, но внутри файла)
+   ============================================================ */
+let FILTERED = [...RAW];
+const charts = {};
+const MANUAL_EFFECTS = {};
+
+const PALETTE = ['#1C2E4A','#52677D','#2E7D52','#B23A3A','#8A6D3B','#3B5A8A','#6B4C9A','#2A7F8A','#A85A3B','#4A6B3B'];
+const ECON_BASE = {'инфраструктура':15000000,'экономика':25000000,'здравоохранение':12000000,'образование':8000000,'экология':10000000,'цифровизация':18000000,'социальное':6000000,'культура':5000000,'безопасность':7000000,'другое':3000000};
+const ECON_KEYWORDS = {'инфраструктура':['дорог','тротуар','мост','транспорт','жкх','водоснабж','канализац','благоустрой','строительств','остановк','свет','электросет','ремонт'],'экономика':['инвестиц','предприят','завод','производств','агро','ферм','туризм','логистик','бизнес','рабочих мест','налог','врп','экспорт','импортозамещ'],'здравоохранение':['больниц','поликлиник','медиц','врач','фap','скорой','хоспис','реабилитац','здоров'],'образование':['школ','детсад','детский сад','вуз','колледж','образован','университет','училищ','стипенд'],'экология':['эколог','мусор','отход','переработ','чист','река','дон','озелен','парк','зелен','амбрози','свалк'],'цифровизация':['цифров','it ','ит-','блокчейн','крипт','программ','платформ','приложен','интернет','связь','автоматизац'],'социальное':['семь','демограф','рождаем','пенсион','инвалид','ветеран','молодеж','молодёж','социальн','льгот','выплат','поддержк'],'культура':['культур','музей','театр','библиотек','музык','казач','традиц','фестивал','искусств'],'безопасность':['безопасн','мошенник','преступ','полици','мвд','пожарн','чс','терроризм','наркотик'],'другое':[]};
+
+const fmt = n => new Intl.NumberFormat('ru-RU').format(n);
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function parseDate(s){if(!s)return null;const p=s.split('.');return p.length===3?new Date(+p[2],+p[1]-1,+p[0]):null;}
+function download(fn,c,m){const b=new Blob([c],{type:m});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);}
+function shorten(s,n=40){return s&&s.length>n?s.slice(0,n)+'…':(s||'');}
+function detectCategory(item){const hay=((item.text||'')+' '+(item.subtheme||'')+' '+(item.theme||'')).toLowerCase();let best='другое',bs=0;for(const[cat,words]of Object.entries(ECON_KEYWORDS)){let sc=0;words.forEach(w=>{if(hay.includes(w))sc++;});if(sc>bs){bs=sc;best=cat;}}return best;}
+function textMultiplier(t){const l=(t||'').length;return l>2000?2.5:l>1000?1.8:l>500?1.3:l>200?1:0.6;}
+function statusMultiplier(s){if(!s||!s.trim())return 1;const l=s.toLowerCase();if(l.includes('заверш')||l.includes('выполн')||l.includes('реализ'))return 1.5;if(l.includes('нестратег')||l.includes('отклон'))return 0.3;return 1.2;}
+function estimateEffect(item,i){if(MANUAL_EFFECTS[i]!==undefined)return MANUAL_EFFECTS[i];const cat=detectCategory(item);const base=ECON_BASE[cat]||ECON_BASE['другое'];return Math.round(base*textMultiplier(item.text)*statusMultiplier(item.status));}
+function formatMoney(n){if(n>=1e9)return(n/1e9).toFixed(2)+' млрд ₽';if(n>=1e6)return(n/1e6).toFixed(2)+' млн ₽';if(n>=1e3)return(n/1e3).toFixed(1)+' тыс. ₽';return fmt(n)+' ₽';}
+function classifyStatus(s){if(!s||!s.trim())return'progress';const l=s.toLowerCase();if(l.includes('заверш')||l.includes('выполн')||l.includes('реализ'))return'done';if(l.includes('нестратег')||l.includes('отклон')||l.includes('отказ'))return'rejected';if(l.includes('обработ')||l.includes('рассмотр')||l.includes('очеред'))return'progress';return'unknown';}
+
+function buildFilters(){
+  const themes=[...new Set(RAW.map(r=>r.theme).filter(Boolean))].sort();
+  const cities=[...new Set(RAW.map(r=>r.city).filter(Boolean))].sort();
+  const subs=[...new Set(RAW.map(r=>r.subtheme).filter(Boolean))].sort();
+  const tSel=document.getElementById('fTheme'),cSel=document.getElementById('fCity'),sSel=document.getElementById('fSub');
+  themes.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t.length>60?t.slice(0,60)+'…':t;o.title=t;tSel.appendChild(o);});
+  cities.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cSel.appendChild(o);});
+  subs.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sSel.appendChild(o);});
+}
+function applyFilters(){
+  const theme=document.getElementById('fTheme').value,city=document.getElementById('fCity').value,sub=document.getElementById('fSub').value;
+  const from=document.getElementById('fFrom').value,to=document.getElementById('fTo').value;
+  const search=document.getElementById('fSearch').value.trim().toLowerCase(),fileF=document.getElementById('fFile').value;
+  FILTERED=RAW.filter(r=>{
+    if(theme&&r.theme!==theme)return false;if(city&&r.city!==city)return false;if(sub&&r.subtheme!==sub)return false;
+    if(search&&!(r.text||'').toLowerCase().includes(search))return false;
+    if(fileF==='yes'&&!(r.file&&r.file.trim()))return false;if(fileF==='no'&&(r.file&&r.file.trim()))return false;
+    if(from||to){const d=parseDate(r.date);if(!d)return false;if(from&&d<new Date(from))return false;if(to&&d>new Date(to))return false;}
+    return true;
+  });
+  renderAll();showToast('Найдено: '+FILTERED.length+' из '+RAW.length);
+}
+function resetFilters(){document.querySelectorAll('.filters select,.filters input').forEach(el=>el.value='');FILTERED=[...RAW];renderAll();showToast('Фильтры сброшены');}
+
+function computeStats(){
+  const total=FILTERED.length,withFile=FILTERED.filter(r=>r.file&&r.file.trim()).length,processed=FILTERED.filter(r=>r.status&&r.status.trim()).length;
+  const byTheme={},byCity={},bySub={},byDate={};
+  FILTERED.forEach(r=>{byTheme[r.theme]=(byTheme[r.theme]||0)+1;byCity[r.city]=(byCity[r.city]||0)+1;bySub[r.subtheme]=(bySub[r.subtheme]||0)+1;if(r.date)byDate[r.date]=(byDate[r.date]||0)+1;});
+  const dates=Object.keys(byDate).sort((a,b)=>{const da=parseDate(a),db=parseDate(b);return(da||0)-(db||0);});
+  let cum=0;const cumulativeData=dates.map(d=>{cum+=byDate[d];return cum;});
+  return{total,withFile,processed,themes:Object.keys(byTheme).length,cities:Object.keys(byCity).length,subs:Object.keys(bySub).length,byTheme,byCity,bySub,byDate,dates,cumulativeData};
+}
+function renderKPI(){
+  const s=computeStats(),pct=s.total?Math.round(s.processed/s.total*100):0;
+  const cards=[{label:'Всего инициатив',value:fmt(s.total)},{label:'Уникальных тем',value:fmt(s.themes)},{label:'Городов / районов',value:fmt(s.cities)},{label:'Подтем',value:fmt(s.subs)},{label:'С документом',value:fmt(s.withFile)},{label:'Обработано',value:pct+'%'}];
+  document.getElementById('kpiGrid').innerHTML=cards.map(c=>'<div class="kpi-card"><div class="label">'+c.label+'</div><div class="value">'+c.value+'</div></div>').join('');
+}
+function renderCompletedKPI(){
+  const total=FILTERED.length,counts={done:0,progress:0,rejected:0,unknown:0};
+  FILTERED.forEach(r=>{counts[classifyStatus(r.status)]++;});
+  const pct=total?Math.round(counts.done/total*100):0,pPct=total?Math.round(counts.progress/total*100):0;
+  const cards=[{label:'✅ Завершено',value:fmt(counts.done),sub:pct+'% от всех'},{label:'⏳ В обработке',value:fmt(counts.progress),sub:pPct+'% от всех'},{label:'❌ Нестратегические',value:fmt(counts.rejected),sub:''},{label:'❔ Без статуса',value:fmt(counts.unknown),sub:''}];
+  document.getElementById('completedGrid').innerHTML=cards.map(c=>'<div class="kpi-card"><div class="label">'+c.label+'</div><div class="value">'+c.value+'</div>'+(c.sub?'<div style="font-size:.78rem;color:#52677D;margin-top:6px;font-weight:600">'+c.sub+'</div>':'')+'</div>').join('');
+}
+function computeEconomicEffect(){
+  const byCategory={},items=[];let total=0;
+  FILTERED.forEach(r=>{const gi=RAW.indexOf(r);const effect=estimateEffect(r,gi);const cat=detectCategory(r);byCategory[cat]=(byCategory[cat]||0)+effect;total+=effect;items.push(Object.assign({},r,{_effect:effect,_category:cat,_index:gi}));});
+  items.sort((a,b)=>b._effect-a._effect);return{total,byCategory,items};
+}
+function renderEconomicPanel(){
+  const{total,byCategory,items}=computeEconomicEffect(),avg=items.length?total/items.length:0;
+  document.getElementById('econTotal').textContent=formatMoney(total);
+  document.getElementById('econPerIdea').textContent='В среднем '+formatMoney(avg)+' • '+items.length+' шт.';
+  const sorted=Object.entries(byCategory).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('econBreakdown').innerHTML=sorted.map(([cat,val])=>'<div class="econ-item"><div class="k">'+cat+'</div><div class="v">'+formatMoney(val)+'</div><div class="c">'+Math.round(val/total*100)+'% от общего</div></div>').join('');
+  document.querySelector('#econTable tbody').innerHTML=items.slice(0,10).map((it,i)=>'<tr><td><b>'+(i+1)+'</b></td><td>'+(it.city||'—')+'</td><td>'+(it.subtheme||'—')+'</td><td>'+it._category+'</td><td style="font-weight:700;white-space:nowrap">'+formatMoney(it._effect)+'</td><td>'+((it.text||'').slice(0,120))+((it.text||'').length>120?'…':'')+'</td></tr>').join('');
+}
+function destroyCharts(){Object.values(charts).forEach(c=>c&&c.destroy());}
+function renderCharts(){
+  const s=computeStats();destroyCharts();
+  Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.color='#1C2E4A';
+  charts.themes=new Chart(document.getElementById('chartThemes'),{type:'bar',data:{labels:Object.keys(s.byTheme).map(t=>shorten(t,35)),datasets:[{label:'Инициатив',data:Object.values(s.byTheme),backgroundColor:PALETTE[0],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}}}}});
+  const ce=Object.entries(s.byCity).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  charts.cities=new Chart(document.getElementById('chartCities'),{type:'bar',data:{labels:ce.map(e=>e[0]),datasets:[{label:'Инициатив',data:ce.map(e=>e[1]),backgroundColor:PALETTE[1],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}}}}});
+  charts.timeline=new Chart(document.getElementById('chartTimeline'),{type:'line',data:{labels:s.dates,datasets:[{label:'Новых в день',data:s.dates.map(d=>s.byDate[d]),borderColor:PALETTE[2],backgroundColor:'rgba(46,125,82,0.15)',fill:true,tension:0.3,pointRadius:3},{label:'Накопительно',data:s.cumulativeData,borderColor:PALETTE[3],backgroundColor:'rgba(178,58,58,0.1)',fill:false,tension:0.3,borderDash:[5,5],pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},scales:{x:{ticks:{font:{size:10},maxRotation:45}},y:{beginAtZero:true,ticks:{precision:0}}}}});
+  const se=Object.entries(s.bySub).sort((a,b)=>b[1]-a[1]),ts=se.slice(0,8),os=se.slice(8).reduce((a,e)=>a+e[1],0);
+  const sl=ts.map(e=>e[0]),sd=ts.map(e=>e[1]);if(os>0){sl.push('Прочее');sd.push(os);}
+  charts.subthemes=new Chart(document.getElementById('chartSubthemes'),{type:'doughnut',data:{labels:sl,datasets:[{data:sd,backgroundColor:PALETTE,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:12,font:{size:11}}}}}});
+  const{byCategory}=computeEconomicEffect(),ee=Object.entries(byCategory).sort((a,b)=>b[1]-a[1]);
+  charts.econ=new Chart(document.getElementById('chartEcon'),{type:'bar',data:{labels:ee.map(e=>e[0]),datasets:[{label:'Эффект',data:ee.map(e=>e[1]),backgroundColor:PALETTE[2],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>formatMoney(ctx.parsed.y)}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>formatMoney(v)}},x:{ticks:{font:{size:10}}}}}});
+  const counts={done:0,progress:0,rejected:0,unknown:0};FILTERED.forEach(r=>{counts[classifyStatus(r.status)]++;});
+  charts.status=new Chart(document.getElementById('chartStatus'),{type:'doughnut',data:{labels:['Завершено','В обработке','Нестратегическое','Без статуса'],datasets:[{data:[counts.done,counts.progress,counts.rejected,counts.unknown],backgroundColor:['#2E7D52','#E0A800','#B23A3A','#BDC4D4'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}}}});
+}
+function renderTable(){
+  const thead=document.querySelector('#dataTable thead tr'),tbody=document.querySelector('#dataTable tbody');
+  thead.innerHTML='<th>Дата</th><th>Город</th><th>Тема</th><th>Подтема</th><th>Текст</th><th>Статус</th><th>Файл</th>';
+  tbody.innerHTML=FILTERED.map(r=>{
+    const f=r.file&&r.file.trim()?'<a href="'+r.file+'" target="_blank">📄</a>':'—';
+    const t=(r.text||'').length>140?r.text.slice(0,140)+'…':(r.text||'');
+    return'<tr><td style="white-space:nowrap">'+(r.date||'—')+' '+(r.time||'')+'</td><td>'+(r.city||'—')+'</td><td>'+shorten(r.theme||'—',50)+'</td><td>'+(r.subtheme||'—')+'</td><td>'+t+'</td><td>'+(r.status||'—')+'</td><td>'+f+'</td></tr>';
+  }).join('');
+}
+function renderTabs(){
+  const structured={};
+  RAW.forEach(item=>{const theme=item.theme||'Без темы',sub=item.subtheme||'Общее';if(!structured[theme])structured[theme]={};if(!structured[theme][sub])structured[theme][sub]=[];structured[theme][sub].push(item);});
+  const tc=document.getElementById('tabs'),pc=document.getElementById('panels');tc.innerHTML='';pc.innerHTML='';let first=true;
+  for(const theme in structured){
+    const id='theme-'+Math.random().toString(36).slice(2,11);
+    const tab=document.createElement('div');tab.className='tab'+(first?' active':'');tab.textContent=theme.length>40?theme.slice(0,40)+'…':theme;tab.title=theme;tab.setAttribute('data-target',id);tc.appendChild(tab);
+    const panel=document.createElement('div');panel.className='tab-panel'+(first?' active':'');panel.id=id;
+    for(const sub in structured[theme]){
+      const d=document.createElement('details'),sm=document.createElement('summary');sm.textContent=sub+' ('+structured[theme][sub].length+')';d.appendChild(sm);
+      const list=document.createElement('div');list.className='requests-list';
+      structured[theme][sub].forEach(req=>{
+        const c=document.createElement('div');c.className='request-card';
+        const fh=req.file&&req.file.trim()?'<div class="card-file"><a href="'+req.file+'" target="_blank">📄 Документ</a></div>':'';
+        c.innerHTML='<div class="card-city">'+(req.city||'Не указан')+'</div>'+fh+'<div class="card-text">'+(req.text||'—')+'</div><div class="card-status-block"><b>Статус:</b> '+(req.status||'В обработке')+'<br><b>Обработано:</b> '+(req.status_date||'—')+'</div><div class="card-date-block">'+(req.date||'—')+' в '+(req.time||'—')+'</div>';
+        list.appendChild(c);
+      });
+      d.appendChild(list);panel.appendChild(d);
+    }
+    pc.appendChild(panel);first=false;
+  }
+  document.querySelectorAll('.tab').forEach(tab=>{tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));tab.classList.add('active');document.getElementById(tab.getAttribute('data-target')).classList.add('active');});});
+}
+function renderAll(){renderKPI();renderCompletedKPI();renderEconomicPanel();renderCharts();renderTable();renderTabs();}
+
+/* ЭКСПОРТ */
+function exportJSON(){const s=computeStats(),e=computeEconomicEffect();download('center_invest_stats.json',JSON.stringify({generatedAt:new Date().toISOString(),summary:{total:s.total,themes:s.themes,cities:s.cities,subthemes:s.subs,withFile:s.withFile,processed:s.processed},byTheme:s.byTheme,byCity:s.byCity,bySubtheme:s.bySub,byDate:s.byDate,economic:{total:e.total,byCategory:e.byCategory},raw:FILTERED},null,2),'application/json');showToast('JSON скачан');}
+function exportCSV(){const rows=[['date','city','theme','subtheme','status','text']];FILTERED.forEach(r=>rows.push([r.date||'',r.city||'',r.theme||'',r.subtheme||'',r.status||'',(r.text||'').replace(/"/g,'""')]));const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');download('center_invest.csv','\uFEFF'+csv,'text/csv;charset=utf-8');showToast('CSV скачан');}
+function exportReport(){const s=computeStats(),e=computeEconomicEffect();const rows=Object.entries(s.byTheme).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<tr><td>'+k+'</td><td>'+v+'</td></tr>').join('');const html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Отчёт</title><style>body{font-family:system-ui;padding:40px;color:#111}h1{color:#1C2E4A}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f0f4fa}.kpi{display:flex;gap:20px;flex-wrap:wrap;margin:20px 0}.kpi div{background:#f0f4fa;padding:14px 20px;border-radius:8px;min-width:140px}.kpi span{display:block;font-size:12px;color:#555}.kpi b{font-size:20px}</style></head><body><h1>Банк инициатив граждан — отчёт</h1><p>'+new Date().toLocaleString('ru-RU')+'</p><div class="kpi"><div><span>Инициатив</span><b>'+s.total+'</b></div><div><span>Тем</span><b>'+s.themes+'</b></div><div><span>Городов</span><b>'+s.cities+'</b></div><div><span>Эффект</span><b>'+formatMoney(e.total)+'</b></div></div><h2>По темам</h2><table><thead><tr><th>Тема</th><th>Кол-во</th></tr></thead><tbody>'+rows+'</tbody></table><script>setTimeout(()=>window.print(),400)<\/script></body></html>';const w=window.open('','_blank');w.document.write(html);w.document.close();}
+function exportSummaryTXT(){const s=computeStats(),e=computeEconomicEffect();const l=['БАНК ИНИЦИАТИВ — СВОДКА','Дата: '+new Date().toLocaleString('ru-RU'),'','Всего: '+s.total,'Тем: '+s.themes,'Городов: '+s.cities,'Эффект: '+formatMoney(e.total),'','ПО ТЕМАМ:',...Object.entries(s.byTheme).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'  '+k+': '+v)];download('summary.txt',l.join('\n'),'text/plain;charset=utf-8');showToast('TXT скачан');}
+function exportEconomicJSON(){const{total,byCategory,items}=computeEconomicEffect();download('economic_effect.json',JSON.stringify({generatedAt:new Date().toISOString(),total,totalFormatted:formatMoney(total),byCategory,top10:items.slice(0,10).map(it=>({city:it.city,effect:it._effect,effectFormatted:formatMoney(it._effect)}))},null,2),'application/json');showToast('economic_effect.json скачан');}
+function exportCompletedCSV(){const rows=[['date','city','subtheme','status']];FILTERED.forEach(r=>{if(classifyStatus(r.status)==='done')rows.push([r.date||'',r.city||'',r.subtheme||'',r.status||'']);});const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');download('completed.csv','\uFEFF'+csv,'text/csv;charset=utf-8');showToast('completed.csv скачан');}
+
+/* СТАРТ */
+document.getElementById('applyFilter').addEventListener('click',applyFilters);
+document.getElementById('resetFilter').addEventListener('click',resetFilters);
+buildFilters();
+renderAll();
+console.log('✅ Загружено инициатив:',RAW.length);
+</script>
 </body>
 </html>

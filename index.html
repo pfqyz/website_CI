@@ -1,561 +1,210 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Банк инициатив граждан — Аналитика</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Банк инициатив граждан — Аналитика</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-        :root {
-            --bg: #F9F5ED;
-            --navy: #0F1A2B;
-            --navy-2: #1C2E4A;
-            --dusty: #52677D;
-            --border: #BDC4D4;
-            --soft: #E6EAEF;
-            --white: #ffffff;
-            --accent: #1C2E4A;
-            --green: #2E7D52;
-            --red: #B23A3A;
-        }
+:root{
+  --bg:#F9F5ED; --navy:#0F1A2B; --navy-2:#1C2E4A; --dusty:#52677D;
+  --border:#BDC4D4; --soft:#E6EAEF; --white:#fff; --green:#2E7D52; --red:#B23A3A;
+}
+*{box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);margin:0;padding:0;color:var(--navy);-webkit-text-size-adjust:100%}
 
-        * { box-sizing: border-box; }
+.welcome-screen{height:40vh;display:flex;align-items:flex-start;padding:8vh 8vw 4vh}
+.welcome-screen h1{font-size:2.4rem;font-weight:800;line-height:1.15;margin:0;letter-spacing:-0.02em}
+@media(min-width:768px){.welcome-screen{height:50vh;padding:10vh 10vw 4vh}.welcome-screen h1{font-size:5rem}}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            color: var(--navy);
-            -webkit-text-size-adjust: 100%;
-        }
+.main-content{max-width:1300px;margin:0 auto;padding:0 4vw 60px}
+@media(min-width:768px){.main-content{padding:0 6vw 100px}}
 
-        /* СТАРТОВЫЙ БЛОК */
-        .welcome-screen {
-            height: 40vh;
-            display: flex;
-            align-items: flex-start;
-            padding: 8vh 8vw 4vh;
-            box-sizing: border-box;
-        }
-        .welcome-screen h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
-            line-height: 1.15;
-            color: var(--navy);
-            margin: 0;
-            letter-spacing: -0.02em;
-        }
-        @media (min-width: 768px) {
-            .welcome-screen { height: 50vh; padding: 10vh 10vw 4vh; }
-            .welcome-screen h1 { font-size: 5rem; }
-        }
+.section-title{font-size:1.3rem;font-weight:800;color:var(--navy-2);margin:0 0 16px;letter-spacing:-0.01em}
 
-        .main-content {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 0 4vw 60px 4vw;
-        }
-        @media (min-width: 768px) {
-            .main-content { padding: 0 6vw 100px 6vw; }
-        }
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(15,26,43,.04)}
+.kpi-card .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--dusty);font-weight:600;margin-bottom:8px}
+.kpi-card .value{font-size:1.6rem;font-weight:800;color:var(--navy-2);line-height:1.1}
 
-        /* KPI КАРТОЧКИ */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-        .kpi-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 16px 18px;
-            box-shadow: 0 2px 8px rgba(15, 26, 43, 0.04);
-        }
-        .kpi-card .label {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--dusty);
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .kpi-card .value {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--navy-2);
-            line-height: 1.1;
-        }
-        .kpi-card .value.small { font-size: 1rem; font-weight: 700; }
+.filters{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.filters label{display:block;font-size:.75rem;font-weight:600;color:var(--dusty);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
+.filters select,.filters input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 10px;font-size:.9rem;color:var(--navy);font-family:inherit}
+.filters button{align-self:end;background:var(--navy-2);color:var(--bg);border:none;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-family:inherit;font-size:.9rem;transition:.2s}
+.filters button:hover{background:var(--navy)}
+.filters button.reset{background:var(--dusty)}
+.filters button.reset:hover{background:#435568}
 
-        /* ФИЛЬТРЫ */
-        .filters {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 24px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-        }
-        .filters label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--dusty);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-        .filters select, .filters input {
-            width: 100%;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 9px 10px;
-            font-size: 0.9rem;
-            color: var(--navy);
-            font-family: inherit;
-        }
-        .filters button {
-            align-self: end;
-            background: var(--navy-2);
-            color: var(--bg);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 16px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: 0.2s;
-        }
-        .filters button:hover { background: var(--navy); }
-        .filters button.reset {
-            background: var(--dusty);
-        }
-        .filters button.reset:hover { background: #435568; }
+.charts-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:28px}
+@media(min-width:900px){.charts-grid{grid-template-columns:1fr 1fr}}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(15,26,43,.04)}
+.chart-card h3{margin:0 0 14px;font-size:1rem;font-weight:700;color:var(--navy-2)}
+.chart-wrap{position:relative;height:300px}
 
-        /* ГРАФИКИ */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-        @media (min-width: 900px) {
-            .charts-grid { grid-template-columns: 1fr 1fr; }
-        }
-        .chart-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
-            box-shadow: 0 2px 8px rgba(15, 26, 43, 0.04);
-        }
-        .chart-card h3 {
-            margin: 0 0 14px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--navy-2);
-        }
-        .chart-wrap {
-            position: relative;
-            height: 300px;
-        }
+.export-panel{background:var(--navy-2);color:var(--bg);border-radius:14px;padding:22px;margin-bottom:28px}
+.export-panel h3{margin:0 0 6px;font-size:1.1rem;color:var(--bg)}
+.export-panel p{margin:0 0 16px;font-size:.88rem;color:var(--border);line-height:1.5}
+.export-buttons{display:flex;gap:10px;flex-wrap:wrap}
+.export-buttons button{background:var(--bg);color:var(--navy-2);border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.88rem;transition:.2s}
+.export-buttons button:hover{background:#fff}
+.export-buttons button.primary{background:var(--green);color:#fff}
+.export-buttons button.primary:hover{background:#256542}
 
-        /* ЭКСПОРТ */
-        .export-panel {
-            background: var(--navy-2);
-            color: var(--bg);
-            border-radius: 14px;
-            padding: 22px;
-            margin-bottom: 28px;
-        }
-        .export-panel h3 {
-            margin: 0 0 6px;
-            font-size: 1.1rem;
-            color: var(--bg);
-        }
-        .export-panel p {
-            margin: 0 0 16px;
-            font-size: 0.88rem;
-            color: var(--border);
-            line-height: 1.5;
-        }
-        .export-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .export-buttons button {
-            background: var(--bg);
-            color: var(--navy-2);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 16px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.88rem;
-            transition: 0.2s;
-        }
-        .export-buttons button:hover { background: #ffffff; }
-        .export-buttons button.primary {
-            background: var(--green);
-            color: #fff;
-        }
-        .export-buttons button.primary:hover { background: #256542; }
+.table-panel{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:28px}
+.table-panel h3{margin:0 0 14px;font-size:1rem;font-weight:700;color:var(--navy-2)}
+.table-scroll{max-height:420px;overflow:auto;border:1px solid var(--soft);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--soft);vertical-align:top}
+th{background:var(--soft);position:sticky;top:0;font-weight:700;color:var(--navy-2);white-space:nowrap}
+tr:hover{background:#faf8f3}
 
-        /* ТАБЛИЦА */
-        .table-panel {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 28px;
-        }
-        .table-panel h3 {
-            margin: 0 0 14px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--navy-2);
-        }
-        .table-scroll {
-            max-height: 420px;
-            overflow: auto;
-            border: 1px solid var(--soft);
-            border-radius: 8px;
-        }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td {
-            padding: 9px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--soft);
-            vertical-align: top;
-        }
-        th {
-            background: var(--soft);
-            position: sticky;
-            top: 0;
-            font-weight: 700;
-            color: var(--navy-2);
-            white-space: nowrap;
-        }
-        tr:hover { background: #faf8f3; }
+.tabs-container{display:flex;flex-wrap:nowrap;margin-bottom:24px;gap:6px;border-bottom:4px solid var(--navy-2);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.tabs-container::-webkit-scrollbar{display:none}
+.tab{padding:12px 20px;cursor:pointer;background-color:var(--dusty);border:1px solid var(--border);border-bottom:none;border-top-left-radius:12px;border-top-right-radius:12px;font-weight:600;font-size:.88rem;color:var(--bg);transition:all .2s;white-space:nowrap;margin-bottom:-1px;flex-shrink:0}
+@media(min-width:768px){.tab{padding:14px 24px;font-size:.95rem}}
+.tab:hover{background-color:#435568}
+.tab.active{background-color:var(--bg);color:var(--navy);border-color:var(--navy-2);border-bottom:4px solid var(--bg);margin-bottom:-4px;position:relative;z-index:2}
 
-        /* ВКЛАДКИ (темы) */
-        .tabs-container {
-            display: flex;
-            flex-wrap: nowrap;
-            margin-bottom: 24px;
-            gap: 6px;
-            border-bottom: 4px solid var(--navy-2);
-            padding-bottom: 0;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-        .tabs-container::-webkit-scrollbar { display: none; }
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            background-color: var(--dusty);
-            border: 1px solid var(--border);
-            border-bottom: none;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            font-weight: 600;
-            font-size: 0.88rem;
-            color: var(--bg);
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            margin-bottom: -1px;
-            flex-shrink: 0;
-        }
-        @media (min-width: 768px) {
-            .tab { padding: 14px 24px; font-size: 0.95rem; }
-        }
-        .tab:hover { background-color: #435568; }
-        .tab.active {
-            background-color: var(--bg);
-            color: var(--navy);
-            border-color: var(--navy-2);
-            border-bottom: 4px solid var(--bg);
-            margin-bottom: -4px;
-            position: relative;
-            z-index: 2;
-        }
+.tab-panel{display:none;animation:fadeIn .3s}
+.tab-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-        .tab-panel { display: none; animation: fadeIn 0.3s ease; }
-        .tab-panel.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+details{background:var(--border);margin-bottom:12px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+summary{padding:14px 18px;font-weight:600;font-size:.95rem;color:var(--navy);cursor:pointer;outline:none;user-select:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+@media(min-width:768px){summary{padding:16px 20px;font-size:1.05rem}}
+details[open]{background:var(--white)}
+details[open] summary{border-bottom:1px solid var(--border);background:var(--soft)}
+.requests-list{padding:14px;display:flex;flex-direction:column;gap:14px}
+@media(min-width:768px){.requests-list{padding:20px;gap:16px}}
+.request-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(15,26,43,.03);display:flex;flex-direction:column;gap:12px}
+@media(min-width:768px){.request-card{padding:24px;display:grid;grid-template-areas:"city file" "text text" "status date";grid-template-rows:auto 1fr auto;gap:14px}}
+.card-city{grid-area:city;font-weight:700;color:var(--navy-2);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.card-file{grid-area:file;text-align:left}
+@media(min-width:768px){.card-file{text-align:right;align-self:center}}
+.card-file a{background-color:var(--navy-2);color:var(--bg);padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:600;text-decoration:none;display:inline-block}
+.card-text{grid-area:text;color:var(--navy);font-size:.93rem;line-height:1.5;word-break:break-word}
+@media(min-width:768px){.card-text{font-size:.98rem;line-height:1.6}}
+.card-status-block{grid-area:status;font-size:.8rem;color:var(--dusty);line-height:1.4;border-top:1px solid var(--soft);padding-top:10px}
+@media(min-width:768px){.card-status-block{font-size:.85rem;border-top:none;padding-top:0;align-self:end}}
+.card-date-block{grid-area:date;font-size:.8rem;color:var(--dusty);text-align:left;font-weight:500}
+@media(min-width:768px){.card-date-block{font-size:.85rem;text-align:right;align-self:end}}
 
-        /* ПОДТЕМЫ */
-        details {
-            background: var(--border);
-            margin-bottom: 12px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        summary {
-            padding: 14px 18px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--navy);
-            cursor: pointer;
-            outline: none;
-            user-select: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
-        @media (min-width: 768px) {
-            summary { padding: 16px 20px; font-size: 1.05rem; }
-        }
-        details[open] { background: var(--white); }
-        details[open] summary {
-            border-bottom: 1px solid var(--border);
-            background: var(--soft);
-        }
+.econ-panel{background:linear-gradient(135deg,#1C2E4A 0%,#2E7D52 100%);color:#F9F5ED;border-radius:14px;padding:24px;margin-bottom:28px;box-shadow:0 4px 16px rgba(15,26,43,.15)}
+.econ-summary{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:768px){.econ-summary{grid-template-columns:1fr 1.4fr}}
+.econ-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:rgba(249,245,237,.7);font-weight:600;margin-bottom:10px}
+.econ-value{font-size:2.2rem;font-weight:800;line-height:1.1;letter-spacing:-.02em}
+.econ-sub{font-size:.88rem;color:rgba(249,245,237,.75);margin-top:8px}
+.econ-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.econ-item{background:rgba(249,245,237,.1);border-radius:10px;padding:12px 14px}
+.econ-item .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:rgba(249,245,237,.7);font-weight:600;margin-bottom:4px}
+.econ-item .v{font-size:1.05rem;font-weight:700}
+.econ-item .c{font-size:.75rem;color:rgba(249,245,237,.65);margin-top:2px}
 
-        .requests-list {
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        @media (min-width: 768px) {
-            .requests-list { padding: 20px; gap: 16px; }
-        }
+.badge{display:inline-block;padding:3px 9px;border-radius:10px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.badge.done{background:#D4EDDA;color:#155724}
+.badge.progress{background:#FFF3CD;color:#856404}
+.badge.rejected{background:#F8D7DA;color:#721C24}
+.badge.unknown{background:#E6EAEF;color:#52677D}
 
-        .request-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(15, 26, 43, 0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        @media (min-width: 768px) {
-            .request-card {
-                padding: 24px;
-                display: grid;
-                grid-template-areas:
-                    "city file"
-                    "text text"
-                    "status date";
-                grid-template-rows: auto 1fr auto;
-                gap: 14px;
-            }
-        }
-        .card-city {
-            grid-area: city;
-            font-weight: 700;
-            color: var(--navy-2);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-        .card-file { grid-area: file; text-align: left; }
-        @media (min-width: 768px) {
-            .card-file { text-align: right; align-self: center; }
-        }
-        .card-file a {
-            background-color: var(--navy-2);
-            color: var(--bg);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .card-text {
-            grid-area: text;
-            color: var(--navy);
-            font-size: 0.93rem;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-        @media (min-width: 768px) {
-            .card-text { font-size: 0.98rem; line-height: 1.6; }
-        }
-        .card-status-block {
-            grid-area: status;
-            font-size: 0.8rem;
-            color: var(--dusty);
-            line-height: 1.4;
-            border-top: 1px solid var(--soft);
-            padding-top: 10px;
-        }
-        @media (min-width: 768px) {
-            .card-status-block {
-                font-size: 0.85rem;
-                border-top: none;
-                padding-top: 0;
-                align-self: end;
-            }
-        }
-        .card-date-block {
-            grid-area: date;
-            font-size: 0.8rem;
-            color: var(--dusty);
-            text-align: left;
-            font-weight: 500;
-        }
-        @media (min-width: 768px) {
-            .card-date-block { font-size: 0.85rem; text-align: right; align-self: end; }
-        }
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy-2);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:600;font-size:.9rem;opacity:0;transition:.3s;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-        /* Секция заголовков */
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--navy-2);
-            margin: 0 0 16px;
-            letter-spacing: -0.01em;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--navy-2);
-            color: var(--bg);
-            padding: 12px 22px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: 0.3s;
-            z-index: 999;
-        }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        @media print {
-            .filters, .export-buttons, .tabs-container, .toast { display: none; }
-            body { background: #fff; }
-        }
-    </style>
+.error-box{background:#F8D7DA;border:1px solid #721C24;color:#721C24;padding:16px;border-radius:12px;margin-bottom:20px;font-weight:600}
+</style>
 </head>
 <body>
 
-    <div class="welcome-screen">
-        <h1>Банк инициатив<br>граждан</h1>
+<div class="welcome-screen">
+  <h1>Банк инициатив<br>граждан</h1>
+</div>
+
+<div class="main-content">
+
+  <div id="errorBox"></div>
+
+  <h2 class="section-title">Общая статистика</h2>
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <h2 class="section-title">Фильтры</h2>
+  <div class="filters">
+    <div><label for="fTheme">Тема</label><select id="fTheme"><option value="">Все темы</option></select></div>
+    <div><label for="fCity">Город / район</label><select id="fCity"><option value="">Все</option></select></div>
+    <div><label for="fSub">Подтема</label><select id="fSub"><option value="">Все подтемы</option></select></div>
+    <div><label for="fFrom">Дата от</label><input type="date" id="fFrom"></div>
+    <div><label for="fTo">Дата до</label><input type="date" id="fTo"></div>
+    <div><label for="fSearch">Поиск по тексту</label><input type="text" id="fSearch" placeholder="Например: дороги"></div>
+    <div><label for="fFile">Документ</label><select id="fFile"><option value="">Все</option><option value="yes">С файлом</option><option value="no">Без файла</option></select></div>
+    <div style="display:flex;gap:8px">
+      <button id="applyFilter" style="flex:1">Применить</button>
+      <button class="reset" id="resetFilter" style="flex:1">Сбросить</button>
     </div>
+  </div>
 
-    <div class="main-content">
+  <h2 class="section-title">Завершённые обращения</h2>
+  <div class="kpi-grid" id="completedGrid"></div>
 
-        <!-- KPI -->
-        <h2 class="section-title">Общая статистика</h2>
-        <div class="kpi-grid" id="kpiGrid"></div>
-
-        <!-- ФИЛЬТРЫ -->
-        <h2 class="section-title">Фильтры</h2>
-        <div class="filters">
-            <div>
-                <label for="fTheme">Тема</label>
-                <select id="fTheme"><option value="">Все темы</option></select>
-            </div>
-            <div>
-                <label for="fCity">Город / район</label>
-                <select id="fCity"><option value="">Все</option></select>
-            </div>
-            <div>
-                <label for="fSub">Подтема</label>
-                <select id="fSub"><option value="">Все подтемы</option></select>
-            </div>
-            <div>
-                <label for="fFrom">Дата от</label>
-                <input type="date" id="fFrom">
-            </div>
-            <div>
-                <label for="fTo">Дата до</label>
-                <input type="date" id="fTo">
-            </div>
-            <div>
-                <label for="fSearch">Поиск по тексту</label>
-                <input type="text" id="fSearch" placeholder="Например: дороги">
-            </div>
-            <div>
-                <label for="fFile">Документ</label>
-                <select id="fFile">
-                    <option value="">Все</option>
-                    <option value="yes">С файлом</option>
-                    <option value="no">Без файла</option>
-                </select>
-            </div>
-            <div style="display:flex; gap:8px;">
-                <button id="applyFilter" style="flex:1;">Применить</button>
-                <button class="reset" id="resetFilter" style="flex:1;">Сбросить</button>
-            </div>
-        </div>
-
-        <!-- ГРАФИКИ -->
-        <h2 class="section-title">Аналитика и графики</h2>
-        <div class="charts-grid">
-            <div class="chart-card">
-                <h3>Инициативы по темам</h3>
-                <div class="chart-wrap"><canvas id="chartThemes"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <h3>Топ-10 городов / районов</h3>
-                <div class="chart-wrap"><canvas id="chartCities"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <h3>Динамика по датам</h3>
-                <div class="chart-wrap"><canvas id="chartTimeline"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <h3>Распределение по подтемам</h3>
-                <div class="chart-wrap"><canvas id="chartSubthemes"></canvas></div>
-            </div>
-        </div>
-
-        <!-- ЭКСПОРТ -->
-        <div class="export-panel">
-            <h3> Экспорт статистики</h3>
-            <p>Скачайте полный файл со всей статистикой по текущей выборке: сводные показатели, разбивка по темам, городам, подтемам, временная динамика и исходные данные.</p>
-            <div class="export-buttons">
-                <button class="primary" onclick="exportJSON()">⬇ Скачать JSON (все данные)</button>
-                <button onclick="exportCSV()">⬇ Скачать CSV</button>
-                <button onclick="exportReport()"> Печатный отчёт</button>
-                <button onclick="exportSummaryTXT()"> Краткая сводка (TXT)</button>
-            </div>
-        </div>
-
-        <!-- ТАБЛИЦА -->
-        <div class="table-panel">
-            <h3> Все инициативы (отфильтрованные)</h3>
-            <div class="table-scroll">
-                <table id="dataTable">
-                    <thead><tr></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ВКЛАДКИ ПО ТЕМАМ -->
-        <h2 class="section-title">Инициативы по темам</h2>
-        <div class="tabs-container" id="tabs"></div>
-        <div id="panels"></div>
-
+  <h2 class="section-title">💰 Экономический эффект</h2>
+  <div class="econ-panel">
+    <div class="econ-summary">
+      <div>
+        <div class="econ-label">Суммарный потенциальный эффект</div>
+        <div class="econ-value" id="econTotal">—</div>
+        <div class="econ-sub" id="econPerIdea">—</div>
+      </div>
+      <div class="econ-breakdown" id="econBreakdown"></div>
     </div>
+  </div>
 
-    <div class="toast" id="toast"></div>
+  <h2 class="section-title">Аналитика и графики</h2>
+  <div class="charts-grid">
+    <div class="chart-card"><h3>Инициативы по темам</h3><div class="chart-wrap"><canvas id="chartThemes"></canvas></div></div>
+    <div class="chart-card"><h3>Топ-10 городов / районов</h3><div class="chart-wrap"><canvas id="chartCities"></canvas></div></div>
+    <div class="chart-card"><h3>Динамика по датам</h3><div class="chart-wrap"><canvas id="chartTimeline"></canvas></div></div>
+    <div class="chart-card"><h3>Распределение по подтемам</h3><div class="chart-wrap"><canvas id="chartSubthemes"></canvas></div></div>
+    <div class="chart-card"><h3>Экономический эффект по категориям</h3><div class="chart-wrap"><canvas id="chartEcon"></canvas></div></div>
+    <div class="chart-card"><h3>Статусы обращений</h3><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div>
+  </div>
 
-    <script src="app.js"></script>
+  <div class="table-panel">
+    <h3>🏆 Топ-10 инициатив по экономическому эффекту</h3>
+    <div class="table-scroll">
+      <table id="econTable">
+        <thead><tr><th>#</th><th>Город</th><th>Подтема</th><th>Категория</th><th>Эффект, ₽</th><th>Текст</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="export-panel">
+    <h3> Экспорт статистики</h3>
+    <p>Скачайте полный файл со всей статистикой: сводные показатели, разбивка по темам/городам/подтемам, временная динамика, экономический эффект и исходные данные.</p>
+    <div class="export-buttons">
+      <button class="primary" onclick="exportJSON()">⬇ Скачать JSON (все данные)</button>
+      <button onclick="exportCSV()">⬇ Скачать CSV</button>
+      <button onclick="exportReport()"> Печатный отчёт</button>
+      <button onclick="exportSummaryTXT()"> Краткая сводка (TXT)</button>
+      <button onclick="exportEconomicJSON()"> Экономический эффект (JSON)</button>
+      <button onclick="exportCompletedCSV()"> Завершённые (CSV)</button>
+    </div>
+  </div>
+
+  <div class="table-panel">
+    <h3> Все инициативы (отфильтрованные)</h3>
+    <div class="table-scroll">
+      <table id="dataTable"><thead><tr></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <h2 class="section-title">Инициативы по темам</h2>
+  <div class="tabs-container" id="tabs"></div>
+  <div id="panels"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
 </body>
 </html>
